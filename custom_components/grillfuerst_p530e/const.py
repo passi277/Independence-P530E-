@@ -79,6 +79,10 @@ TIMER_STATES = {
     2: "running",
     3: "idle",  # seen after power-up, before the timer was used
 }
+TIMER_STOPPED = 0
+TIMER_PAUSED = 1
+TIMER_RUNNING = 2
+TIMER_MAX_MINUTES = 23 * 60 + 59  # app picker: hours + minutes
 
 # Lighting
 DP_KNOB_LIGHT = "116"  # knob light mode, see KNOB_LIGHT_MODES

@@ -145,6 +145,20 @@
       },
       "probe_target": {
         "name": "Probe F{probe} target"
+      },
+      "timer_duration": {
+        "name": "Timer duration"
+      }
+    },
+    "button": {
+      "timer_start": {
+        "name": "Timer start"
+      },
+      "timer_pause": {
+        "name": "Timer pause"
+      },
+      "timer_stop": {
+        "name": "Timer stop"
       }
     }
   }

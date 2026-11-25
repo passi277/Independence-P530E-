@@ -30,6 +30,8 @@ Entitäten:
 | Gasflaschengröße (3,0–12,0 kg, 0,5er) | Zahl (Konfiguration) | DP 122 |
 | Timer (Status) | Sensor | DP 126 |
 | Timer Restzeit (min) | Sensor | DP 124 |
+| Timer-Dauer (min) – experimentell | Zahl | DP 124 |
+| Timer Start / Pause / Stop – experimentell | Knöpfe | DP 126 = 2 / 1 / 0 |
 | Garraumlicht | Schalter | DP 129 |
 | Logo-Beleuchtung | Schalter | DP 128 |
 | Reglerbeleuchtung | Schalter (an = individuell) | DP 116 |

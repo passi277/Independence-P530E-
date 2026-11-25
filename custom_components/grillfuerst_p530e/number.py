@@ -10,7 +10,7 @@ from homeassistant.components.number import (
     NumberEntityDescription,
     NumberMode,
 )
-from homeassistant.const import EntityCategory, UnitOfMass, UnitOfTemperature
+from homeassistant.const import EntityCategory, UnitOfMass, UnitOfTemperature, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -22,8 +22,10 @@ from .const import (
     DP_TARGET_DIRECT,
     DP_TARGET_INDIRECT,
     DP_TARGET_LOW_SLOW,
+    DP_TIMER_REMAINING,
     PROBE_TARGET_MAX,
     PROBE_TARGET_MIN,
+    TIMER_MAX_MINUTES,
     WEIGHT_SCALE,
 )
 from .entity import GrillEntity
@@ -71,6 +73,18 @@ PROBE_TARGETS = tuple(
 
 NUMBERS: tuple[GrillNumberDescription, ...] = (
     *PROBE_TARGETS,
+    GrillNumberDescription(
+        key="timer_duration",
+        translation_key="timer_duration",
+        icon="mdi:timer-cog-outline",
+        device_class=NumberDeviceClass.DURATION,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
+        native_min_value=0,
+        native_max_value=TIMER_MAX_MINUTES,
+        native_step=1,
+        mode=NumberMode.BOX,
+        dp=DP_TIMER_REMAINING,
+    ),
     _temperature("target_direct", DP_TARGET_DIRECT, 200, 360),
     _temperature("target_indirect", DP_TARGET_INDIRECT, 120, 200),
     _temperature("target_low_slow", DP_TARGET_LOW_SLOW, 95, 115),

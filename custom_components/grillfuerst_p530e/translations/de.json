@@ -145,6 +145,20 @@
       },
       "probe_target": {
         "name": "Zieltemperatur Fühler F{probe}"
+      },
+      "timer_duration": {
+        "name": "Timer-Dauer"
+      }
+    },
+    "button": {
+      "timer_start": {
+        "name": "Timer Start"
+      },
+      "timer_pause": {
+        "name": "Timer Pause"
+      },
+      "timer_stop": {
+        "name": "Timer Stop"
       }
     }
   }
