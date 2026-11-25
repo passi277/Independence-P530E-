@@ -68,6 +68,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 102–107 | int | evtl. Kerntemperaturfühler | ❓ (Fühler noch nicht getestet) |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
 | 108, 109 | int | ? | ❓ |
-| 125, 130, 131 | bool | ? | ❓ |
+| 130 | bool | geht beim An- UND Ausschalten des Sounds in der App kurz (~30 s) auf true – evtl. Quittier-/Piepsignal; Sound-Zustand selbst wird nicht gemeldet | ❓ |
+| 125, 131 | bool | ? | ❓ |
 | 126 | int | Timer-Status: 0 gestoppt, 1 pausiert, 2 läuft, 3 bereit | ✅ |
 | 132 | bool | evtl. Grill aktiv/wach | ❓ |
