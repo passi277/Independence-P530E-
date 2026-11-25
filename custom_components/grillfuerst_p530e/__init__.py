@@ -8,7 +8,12 @@ from homeassistant.core import HomeAssistant
 
 from .coordinator import GrillCoordinator
 
-PLATFORMS: list[Platform] = [Platform.SELECT, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS: list[Platform] = [
+    Platform.NUMBER,
+    Platform.SELECT,
+    Platform.SENSOR,
+    Platform.SWITCH,
+]
 
 type GrillConfigEntry = ConfigEntry[GrillCoordinator]
 

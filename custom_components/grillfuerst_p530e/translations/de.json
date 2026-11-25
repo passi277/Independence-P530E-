@@ -30,33 +30,8 @@
       "scale_weight": {
         "name": "Gewicht Waage"
       },
-      "cylinder_size": {
-        "name": "Gasflaschengröße"
-      },
-      "cylinder_tare": {
-        "name": "Tara Gasflasche"
-      },
       "gas_level_step": {
         "name": "Füllstandsstufe"
-      },
-      "grill_mode": {
-        "name": "Grillmodus",
-        "state": {
-          "direct": "Direktes Grillen",
-          "stage": "Stufenmodus",
-          "free": "Freies Grillen",
-          "low_slow": "Low & Slow",
-          "indirect": "Indirektes Grillen"
-        }
-      },
-      "target_direct": {
-        "name": "Zieltemperatur Direkt"
-      },
-      "target_indirect": {
-        "name": "Zieltemperatur Indirekt"
-      },
-      "target_low_slow": {
-        "name": "Zieltemperatur Low & Slow"
       },
       "timer_state": {
         "name": "Timer",
@@ -105,6 +80,33 @@
           "individual": "Individuell",
           "magic": "Magic"
         }
+      },
+      "grill_mode": {
+        "name": "Grillmodus",
+        "state": {
+          "direct": "Direktes Grillen",
+          "stage": "Stufenmodus",
+          "free": "Freies Grillen",
+          "low_slow": "Low & Slow",
+          "indirect": "Indirektes Grillen"
+        }
+      }
+    },
+    "number": {
+      "target_direct": {
+        "name": "Zieltemperatur Direkt"
+      },
+      "target_indirect": {
+        "name": "Zieltemperatur Indirekt"
+      },
+      "target_low_slow": {
+        "name": "Zieltemperatur Low & Slow"
+      },
+      "cylinder_tare": {
+        "name": "Tara Gasflasche"
+      },
+      "cylinder_size": {
+        "name": "Gasflaschengröße"
       }
     }
   }

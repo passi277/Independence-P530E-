@@ -18,8 +18,12 @@ Entitäten:
 |---------|-----|--------|
 | Gasmenge (kg) | Sensor | DP 119 |
 | Gasfüllstand (%) | Sensor | berechnet: DP 119 / DP 122 |
-| Grillmodus | Sensor | DP 114 |
-| Zieltemperatur Direkt / Indirekt / Low & Slow | Sensor | DP 110 / 111 / 112 |
+| Grillmodus | Auswahl | DP 114 |
+| Zieltemperatur Direkt (200–360 °C) | Zahl | DP 110 |
+| Zieltemperatur Indirekt (120–200 °C) | Zahl | DP 111 |
+| Zieltemperatur Low & Slow (95–115 °C) | Zahl | DP 112 |
+| Tara Gasflasche (4,0–15,0 kg) | Zahl (Konfiguration) | DP 123 |
+| Gasflaschengröße (3,0–12,0 kg, 0,5er) | Zahl (Konfiguration) | DP 122 |
 | Timer (Status) | Sensor | DP 126 |
 | Timer Restzeit (min) | Sensor | DP 124 |
 | Garraumlicht | Schalter | DP 129 |
@@ -27,11 +31,11 @@ Entitäten:
 | Reglerbeleuchtung | Schalter (an = individuell) | DP 116 |
 | Reglerlicht-Modus | Auswahl | DP 116 |
 | Reglerfarbe | Auswahl | DP 118 |
-| Gewicht Waage, Gasflaschengröße, Tara (kg) | Sensor (Diagnose) | DP 121 / 122 / 123 |
+| Gewicht Waage (kg) | Sensor (Diagnose) | DP 121 |
 | Füllstandsstufe 1–7 | Sensor (Diagnose, deaktiviert) | DP 120 |
 
-Grillmodus und Zieltemperaturen sind bewusst nur lesbar: Der Grill regelt damit seine Gasbrenner,
-das soll nicht unbeaufsichtigt aus Home Assistant heraus passieren.
+Schreibbare Werte werden auf die Grenzen der App begrenzt. Modus und Zieltemperaturen steuern die
+Gasbrenner des Grills – nach dem Grillen die Gasflasche wie gewohnt zudrehen.
 
 Im Standby meldet der Grill die Gaswerte nicht; die Sensoren behalten dann den letzten Wert
 (auch über einen Neustart von Home Assistant hinweg).
@@ -50,9 +54,9 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 
 | DP | Typ | Bedeutung | Status |
 |----|-----|-----------|--------|
-| 110 | int °C | Zieltemperatur Direktes Grillen | ✅ |
-| 111 | int °C | Zieltemperatur Indirektes Grillen | ✅ |
-| 112 | int °C | Zieltemperatur Low & Slow | ✅ (Wert passt, nicht separat geändert) |
+| 110 | int °C | Zieltemperatur Direktes Grillen (200–360) | ✅ |
+| 111 | int °C | Zieltemperatur Indirektes Grillen (120–200) | ✅ |
+| 112 | int °C | Zieltemperatur Low & Slow (95–115) | ✅ |
 | 113 | int | 5 – vermutlich Anzahl Brenner | ❓ |
 | 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (1/2 sehr wahrscheinlich) |
 | 116 | int | Reglerlicht-Modus: 0 aus, 1 zufällig, 2 temperaturabhängig, 3 individuell, 4 magic | ✅ |
@@ -60,8 +64,8 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ |
 | 120 | string `"1"`–`"7"` | Füllstandsstufe für die Flaschengrafik | ✅ |
 | 121 | int ×0,1 kg | Bruttogewicht auf der Waage | ✅ |
-| 122 | int ×0,1 kg | Gasflaschengröße (App-Einstellung, 0,5er-Schritte) | ✅ |
-| 123 | int ×0,1 kg | Tara (App-Einstellung, min. 4,0 kg) | ✅ |
+| 122 | int ×0,1 kg | Gasflaschengröße (App-Einstellung, 3,0–12,0 kg, 0,5er-Schritte) | ✅ |
+| 123 | int ×0,1 kg | Tara (App-Einstellung, 4,0–15,0 kg) | ✅ |
 | 128 | bool | Logo-Beleuchtung | ✅ |
 | 129 | bool | Garraumlicht | ✅ |
 | 101 | int | 23 bzw. 0 je nach Modus – unklar | ❓ |

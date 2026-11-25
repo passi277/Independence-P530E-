@@ -25,7 +25,7 @@ DP_CYLINDER_TARE = "123"  # configured empty-cylinder weight (min 4.0 kg)
 
 WEIGHT_SCALE = 10
 
-# Grill programme (read-only on purpose: the grill drives its gas burners from these)
+# Grill programme (the grill drives its gas burners from these)
 DP_TARGET_DIRECT = "110"  # target temperature "Direktes Grillen", °C
 DP_TARGET_INDIRECT = "111"  # target temperature "Indirektes Grillen", °C
 DP_TARGET_LOW_SLOW = "112"  # target temperature "Low & Slow", °C

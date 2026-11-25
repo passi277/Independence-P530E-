@@ -30,33 +30,8 @@
       "scale_weight": {
         "name": "Scale weight"
       },
-      "cylinder_size": {
-        "name": "Cylinder size"
-      },
-      "cylinder_tare": {
-        "name": "Cylinder tare"
-      },
       "gas_level_step": {
         "name": "Gas level step"
-      },
-      "grill_mode": {
-        "name": "Grill mode",
-        "state": {
-          "direct": "Direct grilling",
-          "stage": "Stage mode",
-          "free": "Free grilling",
-          "low_slow": "Low & Slow",
-          "indirect": "Indirect grilling"
-        }
-      },
-      "target_direct": {
-        "name": "Target temperature direct"
-      },
-      "target_indirect": {
-        "name": "Target temperature indirect"
-      },
-      "target_low_slow": {
-        "name": "Target temperature low & slow"
       },
       "timer_state": {
         "name": "Timer",
@@ -105,6 +80,33 @@
           "individual": "Individual colour",
           "magic": "Magic"
         }
+      },
+      "grill_mode": {
+        "name": "Grill mode",
+        "state": {
+          "direct": "Direct grilling",
+          "stage": "Stage mode",
+          "free": "Free grilling",
+          "low_slow": "Low & Slow",
+          "indirect": "Indirect grilling"
+        }
+      }
+    },
+    "number": {
+      "target_direct": {
+        "name": "Target temperature direct"
+      },
+      "target_indirect": {
+        "name": "Target temperature indirect"
+      },
+      "target_low_slow": {
+        "name": "Target temperature low & slow"
+      },
+      "cylinder_tare": {
+        "name": "Cylinder tare"
+      },
+      "cylinder_size": {
+        "name": "Cylinder size"
       }
     }
   }

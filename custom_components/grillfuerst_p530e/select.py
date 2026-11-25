@@ -10,7 +10,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import GrillConfigEntry
-from .const import DP_KNOB_COLOR, DP_KNOB_LIGHT, KNOB_COLORS, KNOB_LIGHT_MODES
+from .const import (
+    DP_GRILL_MODE,
+    DP_KNOB_COLOR,
+    DP_KNOB_LIGHT,
+    GRILL_MODES,
+    KNOB_COLORS,
+    KNOB_LIGHT_MODES,
+)
 from .entity import GrillEntity
 
 
@@ -23,6 +30,14 @@ class GrillSelectDescription(SelectEntityDescription):
 
 
 SELECTS: tuple[GrillSelectDescription, ...] = (
+    GrillSelectDescription(
+        key="grill_mode",
+        translation_key="grill_mode",
+        icon="mdi:grill",
+        dp=DP_GRILL_MODE,
+        values=GRILL_MODES,
+        options=list(GRILL_MODES.values()),
+    ),
     GrillSelectDescription(
         key="knob_light_mode",
         translation_key="knob_light_mode",
