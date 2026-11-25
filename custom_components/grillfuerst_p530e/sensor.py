@@ -16,6 +16,7 @@ from homeassistant.const import (
     PERCENTAGE,
     EntityCategory,
     UnitOfMass,
+    UnitOfTemperature,
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
@@ -23,7 +24,9 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import GrillConfigEntry
 from .const import (
+    DP_CHAMBER_TEMP,
     DP_CYLINDER_SIZE,
+    DP_PROBE_TEMPS,
     DP_GAS_LEVEL_STEP,
     DP_GAS_REMAINING,
     DP_SCALE_WEIGHT,
@@ -85,7 +88,36 @@ class GrillSensorDescription(SensorEntityDescription):
 
 
 
+def _temperature_sensor(**kwargs: Any) -> GrillSensorDescription:
+    return GrillSensorDescription(
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        **kwargs,
+    )
+
+
+TEMPERATURE_SENSORS: tuple[GrillSensorDescription, ...] = (
+    _temperature_sensor(
+        key="chamber_temperature",
+        translation_key="chamber_temperature",
+        icon="mdi:thermometer",
+        value_fn=_integer(DP_CHAMBER_TEMP),
+    ),
+    *(
+        _temperature_sensor(
+            key=f"probe_{index}_temperature",
+            translation_key="probe_temperature",
+            translation_placeholders={"probe": str(index)},
+            icon="mdi:thermometer-probe",
+            value_fn=_integer(dp),
+        )
+        for index, dp in enumerate(DP_PROBE_TEMPS, start=1)
+    ),
+)
+
 SENSORS: tuple[GrillSensorDescription, ...] = (
+    *TEMPERATURE_SENSORS,
     GrillSensorDescription(
         key="gas_remaining",
         translation_key="gas_remaining",

@@ -44,6 +44,12 @@
       },
       "timer_remaining": {
         "name": "Timer remaining"
+      },
+      "chamber_temperature": {
+        "name": "Grill chamber temperature"
+      },
+      "probe_temperature": {
+        "name": "Probe F{probe} temperature"
       }
     },
     "switch": {
@@ -107,6 +113,9 @@
       },
       "cylinder_size": {
         "name": "Cylinder size"
+      },
+      "probe_target": {
+        "name": "Probe F{probe} target"
       }
     }
   }

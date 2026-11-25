@@ -44,6 +44,12 @@
       },
       "timer_remaining": {
         "name": "Timer Restzeit"
+      },
+      "chamber_temperature": {
+        "name": "Garraumtemperatur"
+      },
+      "probe_temperature": {
+        "name": "Temperatur Fühler F{probe}"
       }
     },
     "switch": {
@@ -107,6 +113,9 @@
       },
       "cylinder_size": {
         "name": "Gasflaschengröße"
+      },
+      "probe_target": {
+        "name": "Zieltemperatur Fühler F{probe}"
       }
     }
   }

@@ -18,9 +18,12 @@ from . import GrillConfigEntry
 from .const import (
     DP_CYLINDER_SIZE,
     DP_CYLINDER_TARE,
+    DP_PROBE_TARGETS,
     DP_TARGET_DIRECT,
     DP_TARGET_INDIRECT,
     DP_TARGET_LOW_SLOW,
+    PROBE_TARGET_MAX,
+    PROBE_TARGET_MIN,
     WEIGHT_SCALE,
 )
 from .entity import GrillEntity
@@ -49,7 +52,25 @@ def _temperature(key: str, dp: str, low: int, high: int) -> GrillNumberDescripti
     )
 
 
+PROBE_TARGETS = tuple(
+    GrillNumberDescription(
+        key=f"probe_{index}_target",
+        translation_key="probe_target",
+        translation_placeholders={"probe": str(index)},
+        icon="mdi:thermometer-probe",
+        device_class=NumberDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        native_min_value=PROBE_TARGET_MIN,
+        native_max_value=PROBE_TARGET_MAX,
+        native_step=1,
+        mode=NumberMode.BOX,
+        dp=dp,
+    )
+    for index, dp in enumerate(DP_PROBE_TARGETS, start=1)
+)
+
 NUMBERS: tuple[GrillNumberDescription, ...] = (
+    *PROBE_TARGETS,
     _temperature("target_direct", DP_TARGET_DIRECT, 200, 360),
     _temperature("target_indirect", DP_TARGET_INDIRECT, 120, 200),
     _temperature("target_low_slow", DP_TARGET_LOW_SLOW, 95, 115),

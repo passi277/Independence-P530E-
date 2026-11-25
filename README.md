@@ -16,6 +16,9 @@ Entitäten:
 
 | Entität | Typ | Quelle |
 |---------|-----|--------|
+| Garraumtemperatur (vermutet) | Sensor | DP 101 |
+| Temperatur Fühler F1–F4 (vermutet) | Sensor | DP 102–105 |
+| Zieltemperatur Fühler F1–F4 (0–200 °C) | Zahl | DP 106–109 |
 | Gasmenge (kg) | Sensor | DP 119 |
 | Gasfüllstand (%) | Sensor | berechnet: DP 119 / DP 122 |
 | Grillmodus | Auswahl | DP 114 |
@@ -68,10 +71,10 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 123 | int ×0,1 kg | Tara (App-Einstellung, 4,0–15,0 kg) | ✅ |
 | 128 | bool | Logo-Beleuchtung | ✅ |
 | 129 | bool | Garraumlicht | ✅ |
-| 101 | int | 23 bzw. 0 je nach Modus – unklar | ❓ |
-| 102–107 | int | evtl. Kerntemperaturfühler | ❓ (Fühler noch nicht getestet) |
+| 101 | int °C | vermutlich Garraumtemperatur (Fühler unter dem Rost); 23 bzw. 0 je nach Modus | ❓ |
+| 102–105 | int °C | vermutlich Ist-Temperatur Fühler F1–F4 | ❓ (Fühler noch nicht getestet) |
+| 106–109 | int °C | Zieltemperatur Fühler F1–F4 (0–200) | ✅ F1–F3, F4 nach Muster |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
-| 108, 109 | int | ? | ❓ |
 | 130 | bool | geht beim An- UND Ausschalten des Sounds in der App kurz (~30 s) auf true – evtl. Quittier-/Piepsignal; Sound-Zustand selbst wird nicht gemeldet | ❓ |
 | 125, 131 | bool | ? | ❓ |
 | 126 | int | Timer-Status: 0 gestoppt, 1 pausiert, 2 läuft, 3 bereit | ✅ |
