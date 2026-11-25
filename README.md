@@ -12,16 +12,23 @@ Einrichtung: Einstellungen → Geräte & Dienste → Integration hinzufügen →
 IP-Adresse, Geräte-ID und lokaler Schlüssel werden aus einer vorhandenen Tuya-Local-Einrichtung übernommen.
 Den Grill danach aus Tuya Local entfernen – zwei gleichzeitige lokale Verbindungen vertragen Tuya-Geräte schlecht.
 
-Sensoren (bisher nur Gasflasche):
+Entitäten:
 
-| Sensor | Quelle |
-|--------|--------|
-| Gasmenge (kg) | DP 119 |
-| Gasfüllstand (%) | berechnet: DP 119 / DP 122 |
-| Gewicht Waage (kg) | DP 121 (Diagnose) |
-| Gasflaschengröße (kg) | DP 122 (Diagnose) |
-| Tara Gasflasche (kg) | DP 123 (Diagnose) |
-| Füllstandsstufe 1–7 | DP 120 (Diagnose, standardmäßig deaktiviert) |
+| Entität | Typ | Quelle |
+|---------|-----|--------|
+| Gasmenge (kg) | Sensor | DP 119 |
+| Gasfüllstand (%) | Sensor | berechnet: DP 119 / DP 122 |
+| Grillmodus | Sensor | DP 114 |
+| Zieltemperatur Direkt / Indirekt / Low & Slow | Sensor | DP 110 / 111 / 112 |
+| Garraumlicht | Schalter | DP 129 |
+| Logo-Beleuchtung | Schalter | DP 128 |
+| Reglerbeleuchtung | Schalter | DP 116 |
+| Reglerfarbe | Auswahl | DP 118 |
+| Gewicht Waage, Gasflaschengröße, Tara (kg) | Sensor (Diagnose) | DP 121 / 122 / 123 |
+| Füllstandsstufe 1–7 | Sensor (Diagnose, deaktiviert) | DP 120 |
+
+Grillmodus und Zieltemperaturen sind bewusst nur lesbar: Der Grill regelt damit seine Gasbrenner,
+das soll nicht unbeaufsichtigt aus Home Assistant heraus passieren.
 
 Im Standby meldet der Grill die Gaswerte nicht; die Sensoren behalten dann den letzten Wert
 (auch über einen Neustart von Home Assistant hinweg).
@@ -40,16 +47,23 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 
 | DP | Typ | Bedeutung | Status |
 |----|-----|-----------|--------|
-| 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ bestätigt |
-| 120 | string `"1"`–`"7"` | Füllstandsstufe für die Flaschengrafik | ✅ bestätigt |
-| 121 | int ×0,1 kg | Bruttogewicht auf der Waage | ✅ bestätigt |
-| 122 | int ×0,1 kg | Gasflaschengröße (App-Einstellung, 0,5er-Schritte) | ✅ bestätigt |
-| 123 | int ×0,1 kg | Tara (App-Einstellung, min. 4,0 kg) | ✅ bestätigt |
-| 101 | int | evtl. Garraum-/Umgebungstemperatur (23) | ❓ |
-| 102–107 | int | evtl. Kerntemperaturfühler | ❓ |
-| 108, 109, 113, 114, 124 | int | ? | ❓ |
-| 110 / 111 / 112 | int | 200 / 125 / 95 – evtl. Zieltemperaturen/Alarme | ❓ |
-| 116, 126 | int | 3 | ❓ |
-| 118 | string | `"red"` – evtl. Lichtfarbe | ❓ |
-| 125, 128–131 | bool | ? | ❓ |
-| 132 | bool | evtl. Ein/Aus bzw. aktiv | ❓ |
+| 110 | int °C | Zieltemperatur Direktes Grillen | ✅ |
+| 111 | int °C | Zieltemperatur Indirektes Grillen | ✅ |
+| 112 | int °C | Zieltemperatur Low & Slow | ✅ (Wert passt, nicht separat geändert) |
+| 113 | int | 5 – vermutlich Anzahl Brenner | ❓ |
+| 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (1/2 sehr wahrscheinlich) |
+| 116 | int | Reglerbeleuchtung: 0 aus, 3 an (kurz 1 beim Einschalten) | ✅ |
+| 118 | string | Reglerfarbe: red, orange, yellow, green, light_green, deep_blue, purple, pink | ✅ |
+| 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ |
+| 120 | string `"1"`–`"7"` | Füllstandsstufe für die Flaschengrafik | ✅ |
+| 121 | int ×0,1 kg | Bruttogewicht auf der Waage | ✅ |
+| 122 | int ×0,1 kg | Gasflaschengröße (App-Einstellung, 0,5er-Schritte) | ✅ |
+| 123 | int ×0,1 kg | Tara (App-Einstellung, min. 4,0 kg) | ✅ |
+| 128 | bool | Logo-Beleuchtung | ✅ |
+| 129 | bool | Garraumlicht | ✅ |
+| 101 | int | 23 bzw. 0 je nach Modus – unklar | ❓ |
+| 102–107 | int | evtl. Kerntemperaturfühler | ❓ (Fühler noch nicht getestet) |
+| 108, 109, 124 | int | ? | ❓ |
+| 125, 130, 131 | bool | ? | ❓ |
+| 126 | int | 3 – ? | ❓ |
+| 132 | bool | evtl. Grill aktiv/wach | ❓ |

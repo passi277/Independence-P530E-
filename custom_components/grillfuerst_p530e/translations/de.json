@@ -21,12 +21,69 @@
   },
   "entity": {
     "sensor": {
-      "gas_remaining": { "name": "Gasmenge" },
-      "gas_level": { "name": "Gasfüllstand" },
-      "scale_weight": { "name": "Gewicht Waage" },
-      "cylinder_size": { "name": "Gasflaschengröße" },
-      "cylinder_tare": { "name": "Tara Gasflasche" },
-      "gas_level_step": { "name": "Füllstandsstufe" }
+      "gas_remaining": {
+        "name": "Gasmenge"
+      },
+      "gas_level": {
+        "name": "Gasfüllstand"
+      },
+      "scale_weight": {
+        "name": "Gewicht Waage"
+      },
+      "cylinder_size": {
+        "name": "Gasflaschengröße"
+      },
+      "cylinder_tare": {
+        "name": "Tara Gasflasche"
+      },
+      "gas_level_step": {
+        "name": "Füllstandsstufe"
+      },
+      "grill_mode": {
+        "name": "Grillmodus",
+        "state": {
+          "direct": "Direktes Grillen",
+          "stage": "Stufenmodus",
+          "free": "Freies Grillen",
+          "low_slow": "Low & Slow",
+          "indirect": "Indirektes Grillen"
+        }
+      },
+      "target_direct": {
+        "name": "Zieltemperatur Direkt"
+      },
+      "target_indirect": {
+        "name": "Zieltemperatur Indirekt"
+      },
+      "target_low_slow": {
+        "name": "Zieltemperatur Low & Slow"
+      }
+    },
+    "switch": {
+      "chamber_light": {
+        "name": "Garraumlicht"
+      },
+      "logo_light": {
+        "name": "Logo-Beleuchtung"
+      },
+      "knob_light": {
+        "name": "Reglerbeleuchtung"
+      }
+    },
+    "select": {
+      "knob_color": {
+        "name": "Reglerfarbe",
+        "state": {
+          "red": "Rot",
+          "orange": "Orange",
+          "yellow": "Gelb",
+          "green": "Grün",
+          "light_green": "Türkis",
+          "deep_blue": "Dunkelblau",
+          "purple": "Lila",
+          "pink": "Pink"
+        }
+      }
     }
   }
 }

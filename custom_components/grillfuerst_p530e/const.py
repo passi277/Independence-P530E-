@@ -24,3 +24,34 @@ DP_CYLINDER_SIZE = "122"  # configured cylinder size
 DP_CYLINDER_TARE = "123"  # configured empty-cylinder weight (min 4.0 kg)
 
 WEIGHT_SCALE = 10
+
+# Grill programme (read-only on purpose: the grill drives its gas burners from these)
+DP_TARGET_DIRECT = "110"  # target temperature "Direktes Grillen", °C
+DP_TARGET_INDIRECT = "111"  # target temperature "Indirektes Grillen", °C
+DP_TARGET_LOW_SLOW = "112"  # target temperature "Low & Slow", °C
+DP_GRILL_MODE = "114"
+GRILL_MODES = {
+    0: "direct",
+    1: "stage",
+    2: "free",
+    3: "low_slow",
+    4: "indirect",
+}
+
+# Lighting
+DP_KNOB_LIGHT = "116"  # 0 = off, 3 = on (the app briefly reports 1 while switching on)
+KNOB_LIGHT_ON = 3
+KNOB_LIGHT_OFF = 0
+DP_KNOB_COLOR = "118"
+KNOB_COLORS = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "light_green",
+    "deep_blue",
+    "purple",
+    "pink",
+]
+DP_LOGO_LIGHT = "128"
+DP_CHAMBER_LIGHT = "129"

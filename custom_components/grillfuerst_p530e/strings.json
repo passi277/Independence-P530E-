@@ -21,12 +21,69 @@
   },
   "entity": {
     "sensor": {
-      "gas_remaining": { "name": "Gas remaining" },
-      "gas_level": { "name": "Gas level" },
-      "scale_weight": { "name": "Scale weight" },
-      "cylinder_size": { "name": "Cylinder size" },
-      "cylinder_tare": { "name": "Cylinder tare" },
-      "gas_level_step": { "name": "Gas level step" }
+      "gas_remaining": {
+        "name": "Gas remaining"
+      },
+      "gas_level": {
+        "name": "Gas level"
+      },
+      "scale_weight": {
+        "name": "Scale weight"
+      },
+      "cylinder_size": {
+        "name": "Cylinder size"
+      },
+      "cylinder_tare": {
+        "name": "Cylinder tare"
+      },
+      "gas_level_step": {
+        "name": "Gas level step"
+      },
+      "grill_mode": {
+        "name": "Grill mode",
+        "state": {
+          "direct": "Direct grilling",
+          "stage": "Stage mode",
+          "free": "Free grilling",
+          "low_slow": "Low & Slow",
+          "indirect": "Indirect grilling"
+        }
+      },
+      "target_direct": {
+        "name": "Target temperature direct"
+      },
+      "target_indirect": {
+        "name": "Target temperature indirect"
+      },
+      "target_low_slow": {
+        "name": "Target temperature low & slow"
+      }
+    },
+    "switch": {
+      "chamber_light": {
+        "name": "Grill chamber light"
+      },
+      "logo_light": {
+        "name": "Logo light"
+      },
+      "knob_light": {
+        "name": "Knob light"
+      }
+    },
+    "select": {
+      "knob_color": {
+        "name": "Knob light colour",
+        "state": {
+          "red": "Red",
+          "orange": "Orange",
+          "yellow": "Yellow",
+          "green": "Green",
+          "light_green": "Turquoise",
+          "deep_blue": "Deep blue",
+          "purple": "Purple",
+          "pink": "Pink"
+        }
+      }
     }
   }
 }
