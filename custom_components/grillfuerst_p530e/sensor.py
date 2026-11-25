@@ -85,6 +85,8 @@ class GrillSensorDescription(SensorEntityDescription):
     """Describes a grill sensor."""
 
     value_fn: Callable[[dict[str, Any]], SensorValue]
+    # Keep showing the last known value while the grill is unreachable (gas scale)
+    keep_last: bool = False
 
 
 
@@ -121,6 +123,7 @@ SENSORS: tuple[GrillSensorDescription, ...] = (
     GrillSensorDescription(
         key="gas_remaining",
         translation_key="gas_remaining",
+        keep_last=True,
         icon="mdi:gas-cylinder",
         device_class=SensorDeviceClass.WEIGHT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -131,6 +134,7 @@ SENSORS: tuple[GrillSensorDescription, ...] = (
     GrillSensorDescription(
         key="gas_level",
         translation_key="gas_level",
+        keep_last=True,
         icon="mdi:gauge",
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
@@ -139,6 +143,7 @@ SENSORS: tuple[GrillSensorDescription, ...] = (
     GrillSensorDescription(
         key="scale_weight",
         translation_key="scale_weight",
+        keep_last=True,
         icon="mdi:scale",
         device_class=SensorDeviceClass.WEIGHT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -150,6 +155,7 @@ SENSORS: tuple[GrillSensorDescription, ...] = (
     GrillSensorDescription(
         key="gas_level_step",
         translation_key="gas_level_step",
+        keep_last=True,
         icon="mdi:stairs",
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
@@ -196,6 +202,12 @@ class GrillSensor(GrillEntity, RestoreSensor):
             value = last.native_value
             if isinstance(value, (int, float, str)):
                 self._restored_value = value
+
+    @property
+    def available(self) -> bool:
+        if self.entity_description.keep_last and self.native_value is not None:
+            return True
+        return super().available
 
     @property
     def native_value(self) -> SensorValue:

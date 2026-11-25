@@ -160,6 +160,11 @@
       "timer_stop": {
         "name": "Timer Stop"
       }
+    },
+    "binary_sensor": {
+      "connection": {
+        "name": "Verbindung"
+      }
     }
   }
 }

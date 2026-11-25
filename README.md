@@ -54,8 +54,9 @@ Garstufen (wie in der App, nur die Temperatur wird an den Grill übertragen):
 | Schwein | Well done 70 · Medium well 66 · Medium 62 |
 | Burger / Hähnchen / Truthahn / Fisch | 74 / 78 / 78 / 60 |
 
-Im Standby meldet der Grill die Gaswerte nicht; die Sensoren behalten dann den letzten Wert
-(auch über einen Neustart von Home Assistant hinweg).
+Im Standby oder ohne Strom meldet der Grill keine Gaswerte; Gasmenge, Füllstand und Waage behalten dann den letzten
+Wert und bleiben verfügbar (auch über einen Neustart von Home Assistant hinweg). Der Sensor „Verbindung“ zeigt, ob der
+Grill erreichbar ist; Schalter und Einstellungen sind offline nicht verfügbar.
 
 ## Alternative: Gerätedatei für Tuya Local
 

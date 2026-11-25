@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from .coordinator import GrillCoordinator
 
 PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
     Platform.BUTTON,
     Platform.NUMBER,
     Platform.SELECT,
@@ -22,7 +23,9 @@ type GrillConfigEntry = ConfigEntry[GrillCoordinator]
 async def async_setup_entry(hass: HomeAssistant, entry: GrillConfigEntry) -> bool:
     """Set up the grill from a config entry."""
     coordinator = GrillCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
+    # Do not fail setup while the grill is switched off: the gas values are
+    # restored from the last run and the connection sensor shows "offline".
+    await coordinator.async_refresh()
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
