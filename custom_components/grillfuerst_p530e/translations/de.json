@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Grillfürst Independence P530E",
+        "description": "Lokale Verbindung zum Grill. Ist der Grill bereits in Tuya Local eingerichtet, werden die Werte von dort übernommen.",
+        "data": {
+          "host": "IP-Adresse",
+          "device_id": "Geräte-ID",
+          "local_key": "Lokaler Schlüssel",
+          "protocol_version": "Protokollversion"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Der Grill antwortet nicht. Bitte IP-Adresse und lokalen Schlüssel prüfen und sicherstellen, dass der Grill eingeschaltet ist."
+    },
+    "abort": {
+      "already_configured": "Dieser Grill ist bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "gas_remaining": { "name": "Gasmenge" },
+      "gas_level": { "name": "Gasfüllstand" },
+      "scale_weight": { "name": "Gewicht Waage" },
+      "cylinder_size": { "name": "Gasflaschengröße" },
+      "cylinder_tare": { "name": "Tara Gasflasche" },
+      "gas_level_step": { "name": "Füllstandsstufe" }
+    }
+  }
+}

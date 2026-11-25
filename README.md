@@ -1,9 +1,32 @@
 # Grillfürst Independence P530E – Home Assistant (lokal)
 
 Lokale Einbindung des Grillfürst Independence P530E („Grillfürst Smart Grill 2025“ in der Smart Life App)
-in Home Assistant über [Tuya Local](https://github.com/make-all/tuya-local).
+in Home Assistant – ohne Cloud.
 
-## Gerätedatei
+## Eigene Integration `grillfuerst_p530e` (empfohlen)
+
+`custom_components/grillfuerst_p530e` – über den Marketplace/HACS als benutzerdefiniertes Repository
+(Kategorie *Integration*) installieren oder den Ordner nach `/config/custom_components/` kopieren.
+
+Einrichtung: Einstellungen → Geräte & Dienste → Integration hinzufügen → „Grillfürst Independence P530E“.
+IP-Adresse, Geräte-ID und lokaler Schlüssel werden aus einer vorhandenen Tuya-Local-Einrichtung übernommen.
+Den Grill danach aus Tuya Local entfernen – zwei gleichzeitige lokale Verbindungen vertragen Tuya-Geräte schlecht.
+
+Sensoren (bisher nur Gasflasche):
+
+| Sensor | Quelle |
+|--------|--------|
+| Gasmenge (kg) | DP 119 |
+| Gasfüllstand (%) | berechnet: DP 119 / DP 122 |
+| Gewicht Waage (kg) | DP 121 (Diagnose) |
+| Gasflaschengröße (kg) | DP 122 (Diagnose) |
+| Tara Gasflasche (kg) | DP 123 (Diagnose) |
+| Füllstandsstufe 1–7 | DP 120 (Diagnose, standardmäßig deaktiviert) |
+
+Im Standby meldet der Grill die Gaswerte nicht; die Sensoren behalten dann den letzten Wert
+(auch über einen Neustart von Home Assistant hinweg).
+
+## Alternative: Gerätedatei für Tuya Local
 
 `tuya-local/grillfuerst_smart_grill_2025.yaml` – nach `/config/custom_components/tuya_local/devices/` kopieren,
 Home Assistant neu starten und das Gerät in Tuya Local auf den Typ `grillfuerst_smart_grill_2025` umstellen.
