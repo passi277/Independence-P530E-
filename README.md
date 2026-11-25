@@ -19,6 +19,7 @@ Entitäten:
 | Garraumtemperatur (vermutet) | Sensor | DP 101 |
 | Temperatur Fühler F1–F4 (vermutet) | Sensor | DP 102–105 |
 | Zieltemperatur Fühler F1–F4 (0–200 °C) | Zahl | DP 106–109 |
+| Garstufe Fühler F1–F4 (Vorauswahl der App, setzt die Zieltemperatur) | Auswahl | DP 106–109 |
 | Gasmenge (kg) | Sensor | DP 119 |
 | Gasfüllstand (%) | Sensor | berechnet: DP 119 / DP 122 |
 | Grillmodus | Auswahl | DP 114 |
@@ -39,6 +40,16 @@ Entitäten:
 
 Schreibbare Werte werden auf die Grenzen der App begrenzt. Modus und Zieltemperaturen steuern die
 Gasbrenner des Grills – nach dem Grillen die Gasflasche wie gewohnt zudrehen.
+
+Garstufen (wie in der App, nur die Temperatur wird an den Grill übertragen):
+
+| Sorte | °C |
+|-------|----|
+| Rind | Well done 66 · Medium well 61 · Medium 56 · Medium rare 53 · Rare 50 |
+| Kalb | Well done 74 · Medium well 71 · Medium 66 · Medium rare 63 |
+| Lamm | Well done 68 · Medium well 66 · Medium 62 · Medium rare 56 · Rare 50 |
+| Schwein | Well done 70 · Medium well 66 · Medium 62 |
+| Burger / Hähnchen / Truthahn / Fisch | 74 / 78 / 78 / 60 |
 
 Im Standby meldet der Grill die Gaswerte nicht; die Sensoren behalten dann den letzten Wert
 (auch über einen Neustart von Home Assistant hinweg).

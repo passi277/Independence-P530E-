@@ -96,6 +96,32 @@
           "low_slow": "Low & Slow",
           "indirect": "Indirektes Grillen"
         }
+      },
+      "probe_preset": {
+        "name": "Garstufe Fühler F{probe}",
+        "state": {
+          "beef_well_done": "Rind – Well done (66 °C)",
+          "beef_medium_well": "Rind – Medium well (61 °C)",
+          "beef_medium": "Rind – Medium (56 °C)",
+          "beef_medium_rare": "Rind – Medium rare (53 °C)",
+          "beef_rare": "Rind – Rare (50 °C)",
+          "veal_well_done": "Kalb – Well done (74 °C)",
+          "veal_medium_well": "Kalb – Medium well (71 °C)",
+          "veal_medium": "Kalb – Medium (66 °C)",
+          "veal_medium_rare": "Kalb – Medium rare (63 °C)",
+          "lamb_well_done": "Lamm – Well done (68 °C)",
+          "lamb_medium_well": "Lamm – Medium well (66 °C)",
+          "lamb_medium": "Lamm – Medium (62 °C)",
+          "lamb_medium_rare": "Lamm – Medium rare (56 °C)",
+          "lamb_rare": "Lamm – Rare (50 °C)",
+          "pork_well_done": "Schwein – Well done (70 °C)",
+          "pork_medium_well": "Schwein – Medium well (66 °C)",
+          "pork_medium": "Schwein – Medium (62 °C)",
+          "burger": "Burger – durch (74 °C)",
+          "chicken": "Hähnchen – durch (78 °C)",
+          "turkey": "Truthahn – durch (78 °C)",
+          "fish": "Fisch – durch (60 °C)"
+        }
       }
     },
     "number": {

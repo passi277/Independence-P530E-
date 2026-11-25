@@ -32,6 +32,31 @@ DP_PROBE_TARGETS = ["106", "107", "108", "109"]  # probe target temperatures F1-
 PROBE_TARGET_MIN = 0
 PROBE_TARGET_MAX = 200
 
+# Doneness presets of the app (option key -> probe target °C). The grill only stores the number.
+PROBE_PRESETS: dict[str, int] = {
+    "beef_well_done": 66,
+    "beef_medium_well": 61,
+    "beef_medium": 56,
+    "beef_medium_rare": 53,
+    "beef_rare": 50,
+    "veal_well_done": 74,
+    "veal_medium_well": 71,
+    "veal_medium": 66,
+    "veal_medium_rare": 63,
+    "lamb_well_done": 68,
+    "lamb_medium_well": 66,
+    "lamb_medium": 62,
+    "lamb_medium_rare": 56,
+    "lamb_rare": 50,
+    "pork_well_done": 70,
+    "pork_medium_well": 66,
+    "pork_medium": 62,
+    "burger": 74,
+    "chicken": 78,
+    "turkey": 78,
+    "fish": 60,
+}
+
 # Grill programme (the grill drives its gas burners from these)
 DP_TARGET_DIRECT = "110"  # target temperature "Direktes Grillen", °C
 DP_TARGET_INDIRECT = "111"  # target temperature "Indirektes Grillen", °C

@@ -8,15 +8,18 @@ from typing import Any
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import GrillConfigEntry
 from .const import (
     DP_GRILL_MODE,
     DP_KNOB_COLOR,
     DP_KNOB_LIGHT,
+    DP_PROBE_TARGETS,
     GRILL_MODES,
     KNOB_COLORS,
     KNOB_LIGHT_MODES,
+    PROBE_PRESETS,
 )
 from .entity import GrillEntity
 
@@ -57,6 +60,20 @@ SELECTS: tuple[GrillSelectDescription, ...] = (
 )
 
 
+PRESET_SELECTS: tuple[GrillSelectDescription, ...] = tuple(
+    GrillSelectDescription(
+        key=f"probe_{index}_preset",
+        translation_key="probe_preset",
+        translation_placeholders={"probe": str(index)},
+        icon="mdi:food-steak",
+        dp=dp,
+        values={},
+        options=list(PROBE_PRESETS),
+    )
+    for index, dp in enumerate(DP_PROBE_TARGETS, start=1)
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: GrillConfigEntry,
@@ -64,7 +81,12 @@ async def async_setup_entry(
 ) -> None:
     """Set up the selects."""
     coordinator = entry.runtime_data
-    async_add_entities(GrillSelect(coordinator, description) for description in SELECTS)
+    async_add_entities(
+        [
+            *(GrillSelect(coordinator, description) for description in SELECTS),
+            *(GrillPresetSelect(coordinator, description) for description in PRESET_SELECTS),
+        ]
+    )
 
 
 class GrillSelect(GrillEntity, SelectEntity):
@@ -82,3 +104,30 @@ class GrillSelect(GrillEntity, SelectEntity):
             if name == option:
                 await self.coordinator.async_set_dp(self.entity_description.dp, value)
                 return
+
+
+class GrillPresetSelect(GrillEntity, SelectEntity, RestoreEntity):
+    """Doneness preset for a probe: writes the matching target temperature.
+
+    Several presets share a temperature, so the chosen preset is remembered and
+    shown only while the probe target still equals the preset's temperature.
+    """
+
+    entity_description: GrillSelectDescription
+    _selected: str | None = None
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if (last := await self.async_get_last_state()) is not None and last.state in PROBE_PRESETS:
+            self._selected = last.state
+
+    @property
+    def current_option(self) -> str | None:
+        target = (self.coordinator.data or {}).get(self.entity_description.dp)
+        if self._selected is not None and PROBE_PRESETS[self._selected] == target:
+            return self._selected
+        return None
+
+    async def async_select_option(self, option: str) -> None:
+        self._selected = option
+        await self.coordinator.async_set_dp(self.entity_description.dp, PROBE_PRESETS[option])

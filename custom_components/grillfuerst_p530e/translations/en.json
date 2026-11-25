@@ -96,6 +96,32 @@
           "low_slow": "Low & Slow",
           "indirect": "Indirect grilling"
         }
+      },
+      "probe_preset": {
+        "name": "Probe F{probe} doneness",
+        "state": {
+          "beef_well_done": "Beef – Well done (66 °C)",
+          "beef_medium_well": "Beef – Medium well (61 °C)",
+          "beef_medium": "Beef – Medium (56 °C)",
+          "beef_medium_rare": "Beef – Medium rare (53 °C)",
+          "beef_rare": "Beef – Rare (50 °C)",
+          "veal_well_done": "Veal – Well done (74 °C)",
+          "veal_medium_well": "Veal – Medium well (71 °C)",
+          "veal_medium": "Veal – Medium (66 °C)",
+          "veal_medium_rare": "Veal – Medium rare (63 °C)",
+          "lamb_well_done": "Lamb – Well done (68 °C)",
+          "lamb_medium_well": "Lamb – Medium well (66 °C)",
+          "lamb_medium": "Lamb – Medium (62 °C)",
+          "lamb_medium_rare": "Lamb – Medium rare (56 °C)",
+          "lamb_rare": "Lamb – Rare (50 °C)",
+          "pork_well_done": "Pork – Well done (70 °C)",
+          "pork_medium_well": "Pork – Medium well (66 °C)",
+          "pork_medium": "Pork – Medium (62 °C)",
+          "burger": "Burger – done (74 °C)",
+          "chicken": "Chicken – done (78 °C)",
+          "turkey": "Turkey – done (78 °C)",
+          "fish": "Fish – done (60 °C)"
+        }
       }
     },
     "number": {
