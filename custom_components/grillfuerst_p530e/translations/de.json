@@ -95,6 +95,16 @@
           "purple": "Lila",
           "pink": "Pink"
         }
+      },
+      "knob_light_mode": {
+        "name": "Reglerlicht-Modus",
+        "state": {
+          "off": "Aus",
+          "random": "Zufällig",
+          "temperature": "Temperaturabhängig",
+          "individual": "Individuell",
+          "magic": "Magic"
+        }
       }
     }
   }

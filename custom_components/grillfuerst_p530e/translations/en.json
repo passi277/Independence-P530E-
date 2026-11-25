@@ -95,6 +95,16 @@
           "purple": "Purple",
           "pink": "Pink"
         }
+      },
+      "knob_light_mode": {
+        "name": "Knob light mode",
+        "state": {
+          "off": "Off",
+          "random": "Random",
+          "temperature": "Temperature-dependent",
+          "individual": "Individual colour",
+          "magic": "Magic"
+        }
       }
     }
   }

@@ -24,7 +24,8 @@ Entitäten:
 | Timer Restzeit (min) | Sensor | DP 124 |
 | Garraumlicht | Schalter | DP 129 |
 | Logo-Beleuchtung | Schalter | DP 128 |
-| Reglerbeleuchtung | Schalter | DP 116 |
+| Reglerbeleuchtung | Schalter (an = individuell) | DP 116 |
+| Reglerlicht-Modus | Auswahl | DP 116 |
 | Reglerfarbe | Auswahl | DP 118 |
 | Gewicht Waage, Gasflaschengröße, Tara (kg) | Sensor (Diagnose) | DP 121 / 122 / 123 |
 | Füllstandsstufe 1–7 | Sensor (Diagnose, deaktiviert) | DP 120 |
@@ -54,7 +55,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 112 | int °C | Zieltemperatur Low & Slow | ✅ (Wert passt, nicht separat geändert) |
 | 113 | int | 5 – vermutlich Anzahl Brenner | ❓ |
 | 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (1/2 sehr wahrscheinlich) |
-| 116 | int | Reglerbeleuchtung: 0 aus, 3 an (kurz 1 beim Einschalten) | ✅ |
+| 116 | int | Reglerlicht-Modus: 0 aus, 1 zufällig, 2 temperaturabhängig, 3 individuell, 4 magic | ✅ |
 | 118 | string | Reglerfarbe: red, orange, yellow, green, light_green, deep_blue, purple, pink | ✅ |
 | 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ |
 | 120 | string `"1"`–`"7"` | Füllstandsstufe für die Flaschengrafik | ✅ |

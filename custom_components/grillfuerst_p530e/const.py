@@ -49,9 +49,16 @@ TIMER_STATES = {
 }
 
 # Lighting
-DP_KNOB_LIGHT = "116"  # 0 = off, 3 = on (the app briefly reports 1 while switching on)
-KNOB_LIGHT_ON = 3
+DP_KNOB_LIGHT = "116"  # knob light mode, see KNOB_LIGHT_MODES
+KNOB_LIGHT_ON = 3  # "individual" = fixed colour from DP 118
 KNOB_LIGHT_OFF = 0
+KNOB_LIGHT_MODES = {
+    0: "off",
+    1: "random",
+    2: "temperature",
+    3: "individual",
+    4: "magic",
+}
 DP_KNOB_COLOR = "118"
 KNOB_COLORS = [
     "red",
