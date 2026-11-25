@@ -1,0 +1,87 @@
+# Tuya Local device config for the Grillfürst Independence P530E
+# (Smart Life name: "Grillfürst Smart Grill 2025", product id eo4tfylu1iue4ytt)
+#
+# Status: work in progress — only the gas cylinder scale is mapped so far.
+# All DPs below were verified on a real device (protocol 3.5).
+#
+# Note: while the grill is in standby it only reports DPs 101-107.
+# The gas scale DPs (119-123) appear once the grill is woken up,
+# so every DP here is marked optional.
+
+name: Grillfürst smart gas grill
+products:
+  - id: eo4tfylu1iue4ytt
+    manufacturer: Grillfürst
+    model: Independence P530E (Smart Grill 2025)
+entities:
+  # Remaining gas = scale weight (DP 121) - tare (DP 123), clamped at 0
+  - entity: sensor
+    name: Gas remaining
+    class: weight
+    icon: "mdi:gas-cylinder"
+    dps:
+      - id: 119
+        type: integer
+        name: sensor
+        unit: kg
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 10
+
+  # Gross weight currently on the scale (cylinder incl. tare)
+  - entity: sensor
+    name: Scale weight
+    class: weight
+    category: diagnostic
+    icon: "mdi:scale"
+    dps:
+      - id: 121
+        type: integer
+        name: sensor
+        unit: kg
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 10
+
+  # Fill level step used by the app's cylinder graphic ("1" = empty ... "7" = full)
+  - entity: sensor
+    name: Gas level step
+    category: diagnostic
+    icon: "mdi:gauge"
+    dps:
+      - id: 120
+        type: string
+        name: sensor
+        optional: true
+
+  # Cylinder size as configured in the app (read-only for now)
+  - entity: sensor
+    name: Cylinder size
+    class: weight
+    category: diagnostic
+    icon: "mdi:gas-cylinder"
+    dps:
+      - id: 122
+        type: integer
+        name: sensor
+        unit: kg
+        optional: true
+        mapping:
+          - scale: 10
+
+  # Tare (empty cylinder weight) as configured in the app, min 4.0 kg (read-only for now)
+  - entity: sensor
+    name: Cylinder tare
+    class: weight
+    category: diagnostic
+    icon: "mdi:weight-kilogram"
+    dps:
+      - id: 123
+        type: integer
+        name: sensor
+        unit: kg
+        optional: true
+        mapping:
+          - scale: 10
