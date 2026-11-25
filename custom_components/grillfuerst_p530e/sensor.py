@@ -12,7 +12,13 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfMass, UnitOfTemperature
+from homeassistant.const import (
+    PERCENTAGE,
+    EntityCategory,
+    UnitOfMass,
+    UnitOfTemperature,
+    UnitOfTime,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -27,7 +33,10 @@ from .const import (
     DP_TARGET_DIRECT,
     DP_TARGET_INDIRECT,
     DP_TARGET_LOW_SLOW,
+    DP_TIMER_REMAINING,
+    DP_TIMER_STATE,
     GRILL_MODES,
+    TIMER_STATES,
     WEIGHT_SCALE,
 )
 from .entity import GrillEntity
@@ -72,6 +81,10 @@ def _level_step(data: dict[str, Any]) -> SensorValue:
 
 def _grill_mode(data: dict[str, Any]) -> SensorValue:
     return GRILL_MODES.get(data.get(DP_GRILL_MODE))
+
+
+def _timer_state(data: dict[str, Any]) -> SensorValue:
+    return TIMER_STATES.get(data.get(DP_TIMER_STATE))
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -157,6 +170,22 @@ SENSORS: tuple[GrillSensorDescription, ...] = (
         device_class=SensorDeviceClass.ENUM,
         options=list(GRILL_MODES.values()),
         value_fn=_grill_mode,
+    ),
+    GrillSensorDescription(
+        key="timer_state",
+        translation_key="timer_state",
+        icon="mdi:timer-outline",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(TIMER_STATES.values()),
+        value_fn=_timer_state,
+    ),
+    GrillSensorDescription(
+        key="timer_remaining",
+        translation_key="timer_remaining",
+        icon="mdi:timer-sand",
+        device_class=SensorDeviceClass.DURATION,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
+        value_fn=_integer(DP_TIMER_REMAINING),
     ),
     _target_temperature("target_direct", DP_TARGET_DIRECT),
     _target_temperature("target_indirect", DP_TARGET_INDIRECT),

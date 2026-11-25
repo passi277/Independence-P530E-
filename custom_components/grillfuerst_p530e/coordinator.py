@@ -112,7 +112,10 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             except (CannotConnect, OSError) as err:
                 raise HomeAssistantError(f"Could not send command to the grill: {err}") from err
         self._dps[dp] = value
-        self.async_set_updated_data(dict(self._dps))
+        # Update entities without restarting the poll interval
+        # (async_set_updated_data would push the next poll back).
+        self.data = dict(self._dps)
+        self.async_update_listeners()
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:

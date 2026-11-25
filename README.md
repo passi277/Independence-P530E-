@@ -20,6 +20,8 @@ Entitäten:
 | Gasfüllstand (%) | Sensor | berechnet: DP 119 / DP 122 |
 | Grillmodus | Sensor | DP 114 |
 | Zieltemperatur Direkt / Indirekt / Low & Slow | Sensor | DP 110 / 111 / 112 |
+| Timer (Status) | Sensor | DP 126 |
+| Timer Restzeit (min) | Sensor | DP 124 |
 | Garraumlicht | Schalter | DP 129 |
 | Logo-Beleuchtung | Schalter | DP 128 |
 | Reglerbeleuchtung | Schalter | DP 116 |
@@ -63,7 +65,8 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 129 | bool | Garraumlicht | ✅ |
 | 101 | int | 23 bzw. 0 je nach Modus – unklar | ❓ |
 | 102–107 | int | evtl. Kerntemperaturfühler | ❓ (Fühler noch nicht getestet) |
-| 108, 109, 124 | int | ? | ❓ |
+| 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
+| 108, 109 | int | ? | ❓ |
 | 125, 130, 131 | bool | ? | ❓ |
-| 126 | int | 3 – ? | ❓ |
+| 126 | int | Timer-Status: 0 gestoppt, 1 pausiert, 2 läuft, 3 bereit | ✅ |
 | 132 | bool | evtl. Grill aktiv/wach | ❓ |

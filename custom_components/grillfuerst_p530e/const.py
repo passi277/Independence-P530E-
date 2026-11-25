@@ -38,6 +38,16 @@ GRILL_MODES = {
     4: "indirect",
 }
 
+# Kitchen timer of the app
+DP_TIMER_REMAINING = "124"  # remaining minutes (rounded up)
+DP_TIMER_STATE = "126"
+TIMER_STATES = {
+    0: "stopped",
+    1: "paused",
+    2: "running",
+    3: "idle",  # seen after power-up, before the timer was used
+}
+
 # Lighting
 DP_KNOB_LIGHT = "116"  # 0 = off, 3 = on (the app briefly reports 1 while switching on)
 KNOB_LIGHT_ON = 3

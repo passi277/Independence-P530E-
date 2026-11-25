@@ -57,6 +57,18 @@
       },
       "target_low_slow": {
         "name": "Target temperature low & slow"
+      },
+      "timer_state": {
+        "name": "Timer",
+        "state": {
+          "stopped": "Stopped",
+          "paused": "Paused",
+          "running": "Running",
+          "idle": "Ready"
+        }
+      },
+      "timer_remaining": {
+        "name": "Timer remaining"
       }
     },
     "switch": {
