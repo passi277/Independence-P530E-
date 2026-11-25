@@ -50,6 +50,36 @@
       },
       "probe_temperature": {
         "name": "Probe F{probe} temperature"
+      },
+      "gas_consumed": {
+        "name": "Gas consumed"
+      },
+      "gas_energy": {
+        "name": "Gas energy"
+      },
+      "gas_rate": {
+        "name": "Gas consumption rate"
+      },
+      "gas_runtime": {
+        "name": "Gas runtime left"
+      },
+      "session_start": {
+        "name": "Grill session start"
+      },
+      "session_duration": {
+        "name": "Grill session duration"
+      },
+      "session_gas": {
+        "name": "Grill session gas"
+      },
+      "session_max_temp": {
+        "name": "Grill session max temperature"
+      },
+      "preheat_eta": {
+        "name": "Preheated at"
+      },
+      "probe_eta": {
+        "name": "Probe F{probe} ready at"
       }
     },
     "switch": {
@@ -164,6 +194,15 @@
     "binary_sensor": {
       "connection": {
         "name": "Connection"
+      },
+      "grilling": {
+        "name": "Grilling"
+      },
+      "preheated": {
+        "name": "Preheated"
+      },
+      "probe_done": {
+        "name": "Probe F{probe} done"
       }
     }
   }

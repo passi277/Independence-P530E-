@@ -23,6 +23,7 @@ type GrillConfigEntry = ConfigEntry[GrillCoordinator]
 async def async_setup_entry(hass: HomeAssistant, entry: GrillConfigEntry) -> bool:
     """Set up the grill from a config entry."""
     coordinator = GrillCoordinator(hass, entry)
+    await coordinator.async_load()
     # Do not fail setup while the grill is switched off: the gas values are
     # restored from the last run and the connection sensor shows "offline".
     await coordinator.async_refresh()

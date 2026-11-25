@@ -58,6 +58,30 @@ Im Standby oder ohne Strom meldet der Grill keine Gaswerte; Gasmenge, Füllstand
 Wert und bleiben verfügbar (auch über einen Neustart von Home Assistant hinweg). Der Sensor „Verbindung“ zeigt, ob der
 Grill erreichbar ist; Schalter und Einstellungen sind offline nicht verfügbar.
 
+### Auswertungen (ab 0.11.0)
+
+Aus den Messwerten berechnet die Integration selbst – auch wenn der Grill gerade offline ist:
+
+| Entität | Bedeutung |
+|---------|-----------|
+| Grillt | an, solange der Garraum ≥ 60 °C ist oder Gas verbraucht wird (Grillsession) |
+| Aufgeheizt | Garraum ist bis auf 5 °C an der Zieltemperatur des aktiven Modus |
+| Fühler F1–F4 fertig | Kerntemperatur hat das Ziel erreicht |
+| Aufgeheizt um / Fühler F1–F4 fertig um | Prognose aus dem Temperaturanstieg der letzten 10 min |
+| Gas verbraucht (kg) / Gasenergie (kWh) | Zähler für Statistik und **Energie-Dashboard** (Gas, 1 kg Propan ≈ 12,8 kWh) |
+| Gasverbrauch pro Stunde / Gas-Restlaufzeit | Ø-Verbrauch beim Grillen (ab 30 min Grillzeit) und wie lange das Gas noch reicht |
+| Grillsession Start / Dauer / Gas / Höchsttemperatur | laufende bzw. letzte Session |
+
+Flaschenwechsel (Sprung nach oben) und Abnehmen der Flasche werden nicht als Verbrauch gezählt.
+
+### Benachrichtigungen (Blueprint)
+
+[![Blueprint importieren](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fpassi277%2FIndependence-P530E-%2Fblob%2Fccr-e7668733-7hwtvk%2Fblueprints%2Fautomation%2Fgrillfuerst_p530e%2Fgrill_notifications.yaml)
+
+`blueprints/automation/grillfuerst_p530e/grill_notifications.yaml` – Push aufs Handy bei: Grill aufgeheizt, Fühler bald fertig
+(x min vorher), Fühler am Ziel, Timer abgelaufen, Gas unter x %, Grill seit x Stunden heiß und Licht abends noch an.
+Jede Nachricht ist einzeln abschaltbar.
+
 ## Alternative: Gerätedatei für Tuya Local
 
 `tuya-local/grillfuerst_smart_grill_2025.yaml` – nach `/config/custom_components/tuya_local/devices/` kopieren,

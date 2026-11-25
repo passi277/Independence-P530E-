@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from datetime import timedelta
 import logging
+import time
 from typing import Any
 
 import tinytuya
@@ -13,7 +14,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+
+from .analytics import GrillAnalytics
 
 from .const import (
     CONF_DEVICE_ID,
@@ -93,6 +97,8 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             CONF_PROTOCOL_VERSION, DEFAULT_PROTOCOL_VERSION
         )
         self._dps: dict[str, Any] = {}
+        self.analytics = GrillAnalytics()
+        self._store: Store[dict[str, Any]] = Store(hass, 1, f"{DOMAIN}.{entry.entry_id}")
         # Tuya devices handle only one local connection well: serialise all access.
         self._lock = asyncio.Lock()
 
@@ -117,6 +123,14 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.data = dict(self._dps)
         self.async_update_listeners()
 
+    async def async_load(self) -> None:
+        """Restore totals and the last session from storage."""
+        self.analytics = GrillAnalytics.from_dict(await self._store.async_load())
+
+    def _feed(self, dps: dict[str, Any] | None) -> None:
+        self.analytics.update(time.time(), dps)
+        self._store.async_delay_save(self.analytics.as_dict, 60)
+
     async def _async_update_data(self) -> dict[str, Any]:
         try:
             async with self._lock:
@@ -127,11 +141,11 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     self._local_key,
                     self._protocol_version,
                 )
-        except CannotConnect as err:
+        except (CannotConnect, OSError) as err:
+            self._feed(None)
             raise UpdateFailed(f"Grill did not answer: {err}") from err
-        except OSError as err:
-            raise UpdateFailed(f"Connection error: {err}") from err
 
         _LOGGER.debug("Grill reported %s", dps)
         self._dps.update(dps)
+        self._feed(self._dps)
         return dict(self._dps)

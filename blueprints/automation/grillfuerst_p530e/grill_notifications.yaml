@@ -1,0 +1,208 @@
+blueprint:
+  name: Grillfürst P530E – Benachrichtigungen
+  description: >-
+    Push-Nachrichten vom Grillfürst Independence P530E (Integration grillfuerst_p530e):
+    Grill aufgeheizt, Fühler bald fertig, Fühler am Ziel, Timer abgelaufen, Gas wird knapp,
+    Grill läuft noch und Licht abends noch an. Jede Nachricht lässt sich einzeln abschalten.
+  domain: automation
+  author: passi277
+  source_url: https://github.com/passi277/Independence-P530E-/blob/ccr-e7668733-7hwtvk/blueprints/automation/grillfuerst_p530e/grill_notifications.yaml
+  homeassistant:
+    min_version: "2024.10.0"
+  input:
+    target:
+      name: Empfänger
+      icon: mdi:cellphone-message
+      input:
+        notify_device:
+          name: Handy
+          description: Gerät der Companion-App, das die Nachrichten bekommt.
+          selector:
+            device:
+              integration: mobile_app
+    grill:
+      name: Grill-Entitäten
+      icon: mdi:grill
+      input:
+        preheated:
+          name: Aufgeheizt
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: binary_sensor
+        probes_done:
+          name: Fühler fertig (F1–F4)
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: binary_sensor
+              multiple: true
+        probe_etas:
+          name: Fühler fertig um (F1–F4)
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: sensor
+              device_class: timestamp
+              multiple: true
+        timer:
+          name: Timer
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: sensor
+              device_class: enum
+        gas_level:
+          name: Gasfüllstand
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: sensor
+        grilling:
+          name: Grillt
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: binary_sensor
+              device_class: running
+        lights:
+          name: Licht (Garraum, Logo)
+          selector:
+            entity:
+              integration: grillfuerst_p530e
+              domain: switch
+              multiple: true
+    messages:
+      name: Nachrichten
+      icon: mdi:bell-cog
+      collapsed: true
+      input:
+        notify_preheated:
+          name: Grill aufgeheizt
+          default: true
+          selector: { boolean: {} }
+        notify_probe_soon:
+          name: Fühler bald fertig
+          default: true
+          selector: { boolean: {} }
+        lead_minutes:
+          name: „Bald fertig“ – Minuten vorher
+          default: 5
+          selector:
+            number: { min: 1, max: 30, unit_of_measurement: min, mode: slider }
+        notify_probe_done:
+          name: Fühler am Ziel
+          default: true
+          selector: { boolean: {} }
+        notify_timer:
+          name: Timer abgelaufen
+          default: true
+          selector: { boolean: {} }
+        notify_gas:
+          name: Gas wird knapp
+          default: true
+          selector: { boolean: {} }
+        gas_threshold:
+          name: Gas-Warnung unter
+          default: 20
+          selector:
+            number: { min: 5, max: 60, step: 5, unit_of_measurement: "%", mode: slider }
+        notify_left_on:
+          name: Grill läuft noch
+          default: true
+          selector: { boolean: {} }
+        left_on_hours:
+          name: „Läuft noch“ nach
+          default: 3
+          selector:
+            number: { min: 1, max: 12, unit_of_measurement: h, mode: slider }
+        notify_lights:
+          name: Licht abends noch an
+          default: true
+          selector: { boolean: {} }
+        lights_time:
+          name: Licht-Prüfung um
+          default: "23:00:00"
+          selector: { time: {} }
+
+mode: queued
+max_exceeded: silent
+
+trigger_variables:
+  eta_entities: !input probe_etas
+  lead: !input lead_minutes
+
+variables:
+  lights: !input lights
+
+triggers:
+  - trigger: state
+    id: preheated
+    entity_id: !input preheated
+    from: "off"
+    to: "on"
+    enabled: !input notify_preheated
+  - trigger: template
+    id: probe_soon
+    value_template: >-
+      {{ eta_entities | select('has_value') | map('states') | map('as_timestamp', 0)
+         | select('>', 0) | select('<=', now().timestamp() + lead * 60) | list | count > 0 }}
+    enabled: !input notify_probe_soon
+  - trigger: state
+    id: probe_done
+    entity_id: !input probes_done
+    from: "off"
+    to: "on"
+    enabled: !input notify_probe_done
+  - trigger: state
+    id: timer_done
+    entity_id: !input timer
+    from: running
+    to: idle
+    enabled: !input notify_timer
+  - trigger: numeric_state
+    id: gas_low
+    entity_id: !input gas_level
+    below: !input gas_threshold
+    enabled: !input notify_gas
+  - trigger: state
+    id: left_on
+    entity_id: !input grilling
+    to: "on"
+    for:
+      hours: !input left_on_hours
+    enabled: !input notify_left_on
+  - trigger: time
+    id: lights_on
+    at: !input lights_time
+    enabled: !input notify_lights
+
+conditions:
+  - condition: or
+    conditions:
+      - condition: not
+        conditions:
+          - condition: trigger
+            id: lights_on
+      - condition: template
+        value_template: "{{ lights | select('is_state', 'on') | list | count > 0 }}"
+
+actions:
+  - variables:
+      title: >-
+        {{ {'preheated': '🔥 Grill aufgeheizt', 'probe_soon': '⏳ Gleich fertig', 'probe_done': '🍖 Fühler am Ziel',
+            'timer_done': '⏰ Timer abgelaufen', 'gas_low': '⛽ Gas wird knapp', 'left_on': '⚠️ Grill läuft noch',
+            'lights_on': '💡 Grill-Licht noch an'}[trigger.id] }}
+      message: >-
+        {% if trigger.id == 'preheated' %}Der Garraum hat seine Zieltemperatur erreicht – du kannst auflegen.
+        {% elif trigger.id == 'probe_soon' %}{% set next = eta_entities | select('has_value') | map('states') | map('as_timestamp', 0) | select('>', 0) | min %}Ein Fühler ist ca. {{ ((next - now().timestamp()) / 60) | round(0) | int }} min vor dem Ziel – {{ next | timestamp_custom('%H:%M') }} Uhr.
+        {% elif trigger.id == 'probe_done' %}{{ trigger.to_state.name }}: Zieltemperatur erreicht – jetzt herausnehmen und ruhen lassen.
+        {% elif trigger.id == 'timer_done' %}Der Grill-Timer ist abgelaufen.
+        {% elif trigger.id == 'gas_low' %}Nur noch {{ trigger.to_state.state }} % Gas in der Flasche – Ersatzflasche bereithalten.
+        {% elif trigger.id == 'left_on' %}Der Grill ist seit über {{ (trigger.for.total_seconds() // 3600) | int }} Stunden heiß. Alles in Ordnung?
+        {% else %}{{ lights | select('is_state', 'on') | map('state_attr', 'friendly_name') | join(', ') }} ist noch eingeschaltet.{% endif %}
+  - device_id: !input notify_device
+    domain: mobile_app
+    type: notify
+    title: "{{ title }}"
+    message: "{{ message }}"

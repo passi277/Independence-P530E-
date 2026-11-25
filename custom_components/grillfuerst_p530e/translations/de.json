@@ -50,6 +50,36 @@
       },
       "probe_temperature": {
         "name": "Temperatur Fühler F{probe}"
+      },
+      "gas_consumed": {
+        "name": "Gas verbraucht"
+      },
+      "gas_energy": {
+        "name": "Gasenergie"
+      },
+      "gas_rate": {
+        "name": "Gasverbrauch pro Stunde"
+      },
+      "gas_runtime": {
+        "name": "Gas-Restlaufzeit"
+      },
+      "session_start": {
+        "name": "Grillsession Start"
+      },
+      "session_duration": {
+        "name": "Grillsession Dauer"
+      },
+      "session_gas": {
+        "name": "Grillsession Gas"
+      },
+      "session_max_temp": {
+        "name": "Grillsession Höchsttemperatur"
+      },
+      "preheat_eta": {
+        "name": "Aufgeheizt um"
+      },
+      "probe_eta": {
+        "name": "Fühler F{probe} fertig um"
       }
     },
     "switch": {
@@ -164,6 +194,15 @@
     "binary_sensor": {
       "connection": {
         "name": "Verbindung"
+      },
+      "grilling": {
+        "name": "Grillt"
+      },
+      "preheated": {
+        "name": "Aufgeheizt"
+      },
+      "probe_done": {
+        "name": "Fühler F{probe} fertig"
       }
     }
   }

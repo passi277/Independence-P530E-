@@ -4,10 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime, timedelta
+import time
 from typing import Any
 
 from homeassistant.components.sensor import (
     RestoreSensor,
+    SensorEntity,
     SensorDeviceClass,
     SensorEntityDescription,
     SensorStateClass,
@@ -15,12 +18,14 @@ from homeassistant.components.sensor import (
 from homeassistant.const import (
     PERCENTAGE,
     EntityCategory,
+    UnitOfEnergy,
     UnitOfMass,
     UnitOfTemperature,
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from . import GrillConfigEntry
 from .const import (
@@ -35,6 +40,7 @@ from .const import (
     TIMER_STATES,
     WEIGHT_SCALE,
 )
+from .analytics import GrillAnalytics
 from .entity import GrillEntity
 
 type SensorValue = float | int | str | None
@@ -187,7 +193,12 @@ async def async_setup_entry(
 ) -> None:
     """Set up the grill sensors."""
     coordinator = entry.runtime_data
-    async_add_entities(GrillSensor(coordinator, description) for description in SENSORS)
+    async_add_entities(
+        [
+            *(GrillSensor(coordinator, description) for description in SENSORS),
+            *(GrillStatSensor(coordinator, description) for description in STATS),
+        ]
+    )
 
 
 class GrillSensor(GrillEntity, RestoreSensor):
@@ -213,3 +224,96 @@ class GrillSensor(GrillEntity, RestoreSensor):
     def native_value(self) -> SensorValue:
         value = self.entity_description.value_fn(self.coordinator.data or {})
         return self._restored_value if value is None else value
+
+
+# ---------------- Derived values (gas consumption, sessions, time to target) ----------------
+
+type StatValue = float | int | datetime | None
+
+
+@dataclass(frozen=True, kw_only=True)
+class GrillStatDescription(SensorEntityDescription):
+    """A value computed by GrillAnalytics."""
+
+    stat_fn: Callable[[GrillAnalytics, dict[str, Any], float], StatValue]
+
+
+def _eta(seconds: float | None) -> datetime | None:
+    if seconds is None or seconds <= 0:
+        return None
+    return dt_util.utcnow() + timedelta(seconds=seconds)
+
+
+def _gas_kg(data: dict[str, Any]) -> float | None:
+    raw = data.get(DP_GAS_REMAINING)
+    return raw / WEIGHT_SCALE if isinstance(raw, (int, float)) and not isinstance(raw, bool) else None
+
+
+def _session(key: str, scale: float = 1, digits: int = 0) -> Callable[[GrillAnalytics, dict[str, Any], float], StatValue]:
+    def value(a: GrillAnalytics, _data: dict[str, Any], now: float) -> StatValue:
+        s = a.current_or_last(now)
+        if not s or s.get(key) is None:
+            return None
+        return round(s[key] / scale, digits) if digits else round(s[key] / scale)
+
+    return value
+
+
+def _session_start(a: GrillAnalytics, _data: dict[str, Any], now: float) -> StatValue:
+    s = a.current_or_last(now)
+    return dt_util.utc_from_timestamp(s["start"]) if s else None
+
+
+def _round(v: float | None, digits: int) -> float | None:
+    return None if v is None else round(v, digits)
+
+
+STATS: tuple[GrillStatDescription, ...] = (
+    GrillStatDescription(key="gas_consumed", translation_key="gas_consumed", icon="mdi:gas-cylinder",
+        device_class=SensorDeviceClass.WEIGHT, state_class=SensorStateClass.TOTAL_INCREASING,
+        native_unit_of_measurement=UnitOfMass.KILOGRAMS, suggested_display_precision=1,
+        stat_fn=lambda a, d, n: round(a.gas_consumed, 2)),
+    GrillStatDescription(key="gas_energy", translation_key="gas_energy", icon="mdi:fire",
+        device_class=SensorDeviceClass.ENERGY, state_class=SensorStateClass.TOTAL_INCREASING,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR, suggested_display_precision=1,
+        stat_fn=lambda a, d, n: round(a.gas_energy, 2)),
+    GrillStatDescription(key="gas_rate", translation_key="gas_rate", icon="mdi:speedometer",
+        state_class=SensorStateClass.MEASUREMENT, native_unit_of_measurement="kg/h", suggested_display_precision=2,
+        stat_fn=lambda a, d, n: _round(a.gas_rate, 3)),
+    GrillStatDescription(key="gas_runtime", translation_key="gas_runtime", icon="mdi:timer-sand",
+        device_class=SensorDeviceClass.DURATION, native_unit_of_measurement=UnitOfTime.HOURS, suggested_display_precision=1,
+        stat_fn=lambda a, d, n: _round(a.runtime_left(_gas_kg(d)), 2)),
+    GrillStatDescription(key="session_start", translation_key="session_start", icon="mdi:calendar-clock",
+        device_class=SensorDeviceClass.TIMESTAMP, stat_fn=_session_start),
+    GrillStatDescription(key="session_duration", translation_key="session_duration", icon="mdi:timer-outline",
+        device_class=SensorDeviceClass.DURATION, native_unit_of_measurement=UnitOfTime.MINUTES,
+        stat_fn=_session("duration", 60)),
+    GrillStatDescription(key="session_gas", translation_key="session_gas", icon="mdi:gas-cylinder",
+        device_class=SensorDeviceClass.WEIGHT, native_unit_of_measurement=UnitOfMass.KILOGRAMS, suggested_display_precision=1,
+        stat_fn=_session("gas_used", 1, 2)),
+    GrillStatDescription(key="session_max_temp", translation_key="session_max_temp", icon="mdi:thermometer-high",
+        device_class=SensorDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        stat_fn=_session("max_temp")),
+    GrillStatDescription(key="preheat_eta", translation_key="preheat_eta", icon="mdi:fire-alert",
+        device_class=SensorDeviceClass.TIMESTAMP, stat_fn=lambda a, d, n: _eta(a.preheat_eta(d))),
+    *(
+        GrillStatDescription(key=f"probe_{i + 1}_eta", translation_key="probe_eta", translation_placeholders={"probe": str(i + 1)},
+            icon="mdi:clock-check-outline", device_class=SensorDeviceClass.TIMESTAMP,
+            stat_fn=lambda a, d, n, i=i: _eta(a.probe_eta(i, d)))
+        for i in range(len(DP_PROBE_TEMPS))
+    ),
+)
+
+
+class GrillStatSensor(GrillEntity, SensorEntity):
+    """Computed from the grill history; available even while the grill is offline."""
+
+    entity_description: GrillStatDescription
+
+    @property
+    def available(self) -> bool:
+        return True
+
+    @property
+    def native_value(self) -> StatValue:
+        return self.entity_description.stat_fn(self.coordinator.analytics, self.coordinator.data or {}, time.time())
