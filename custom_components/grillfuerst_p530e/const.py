@@ -104,3 +104,4 @@ KNOB_COLORS = [
 ]
 DP_LOGO_LIGHT = "128"
 DP_CHAMBER_LIGHT = "129"
+DP_SOUND = "130"  # grill buzzer on/off

@@ -14,6 +14,7 @@ from .const import (
     DP_CHAMBER_LIGHT,
     DP_KNOB_LIGHT,
     DP_LOGO_LIGHT,
+    DP_SOUND,
     KNOB_LIGHT_OFF,
     KNOB_LIGHT_ON,
 )
@@ -49,6 +50,12 @@ SWITCHES: tuple[GrillSwitchDescription, ...] = (
         dp=DP_KNOB_LIGHT,
         on_value=KNOB_LIGHT_ON,
         off_value=KNOB_LIGHT_OFF,
+    ),
+    GrillSwitchDescription(
+        key="sound",
+        translation_key="sound",
+        icon="mdi:volume-high",
+        dp=DP_SOUND,
     ),
 )
 

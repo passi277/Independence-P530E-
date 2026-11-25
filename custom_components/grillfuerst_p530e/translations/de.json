@@ -61,6 +61,9 @@
       },
       "knob_light": {
         "name": "Reglerbeleuchtung"
+      },
+      "sound": {
+        "name": "Ton"
       }
     },
     "select": {

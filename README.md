@@ -35,6 +35,7 @@ Entitäten:
 | Reglerbeleuchtung | Schalter (an = individuell) | DP 116 |
 | Reglerlicht-Modus | Auswahl | DP 116 |
 | Reglerfarbe | Auswahl | DP 118 |
+| Ton | Schalter | DP 130 |
 | Gewicht Waage (kg) | Sensor (Diagnose) | DP 121 |
 | Füllstandsstufe 1–7 | Sensor (Diagnose, deaktiviert) | DP 120 |
 
@@ -86,7 +87,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 102–105 | int °C | vermutlich Ist-Temperatur Fühler F1–F4 | ❓ (Fühler noch nicht getestet) |
 | 106–109 | int °C | Zieltemperatur Fühler F1–F4 (0–200) | ✅ F1–F3, F4 nach Muster |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
-| 130 | bool | geht beim An- UND Ausschalten des Sounds in der App kurz (~30 s) auf true – evtl. Quittier-/Piepsignal; Sound-Zustand selbst wird nicht gemeldet | ❓ |
+| 130 | bool | Ton (Sound) an/aus | ✅ |
 | 125, 131 | bool | ? | ❓ |
 | 126 | int | Timer-Status: 0 gestoppt, 1 pausiert, 2 läuft, 3 bereit | ✅ |
 | 132 | bool | evtl. Grill aktiv/wach | ❓ |

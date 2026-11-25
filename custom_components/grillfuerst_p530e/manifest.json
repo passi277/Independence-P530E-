@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/passi277/Independence-P530E-/issues",
   "loggers": ["custom_components.grillfuerst_p530e", "tinytuya"],
   "requirements": ["tinytuya==1.21.1"],
-  "version": "0.7.0"
+  "version": "0.8.0"
 }
