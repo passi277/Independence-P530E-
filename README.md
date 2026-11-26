@@ -26,6 +26,7 @@ Entitäten:
 | Zieltemperatur Direkt (200–360 °C) | Zahl | DP 110 |
 | Zieltemperatur Indirekt (120–200 °C) | Zahl | DP 111 |
 | Zieltemperatur Low & Slow (95–115 °C) | Zahl | DP 112 |
+| Grillstufe Stufenmodus (1–5) | Zahl (Schieberegler) | DP 113 |
 | Tara Gasflasche (4,0–15,0 kg) | Zahl (Konfiguration) | DP 123 |
 | Gasflaschengröße (3,0–12,0 kg, 0,5er) | Zahl (Konfiguration) | DP 122 |
 | Timer (Status) | Sensor | DP 126 |
@@ -99,8 +100,8 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 110 | int °C | Zieltemperatur Direktes Grillen (200–360) | ✅ |
 | 111 | int °C | Zieltemperatur Indirektes Grillen (120–200) | ✅ |
 | 112 | int °C | Zieltemperatur Low & Slow (95–115) | ✅ |
-| 113 | int | 5 – vermutlich Anzahl Brenner | ❓ |
-| 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (1/2 sehr wahrscheinlich) |
+| 113 | int | Stufe im Stufenmodus (1–5) | ✅ |
+| 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (2 sehr wahrscheinlich) |
 | 116 | int | Reglerlicht-Modus: 0 aus, 1 zufällig, 2 temperaturabhängig, 3 individuell, 4 magic | ✅ |
 | 118 | string | Reglerfarbe: red, orange, yellow, green, light_green, deep_blue, purple, pink | ✅ |
 | 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ |

@@ -61,6 +61,9 @@ PROBE_PRESETS: dict[str, int] = {
 DP_TARGET_DIRECT = "110"  # target temperature "Direktes Grillen", °C
 DP_TARGET_INDIRECT = "111"  # target temperature "Indirektes Grillen", °C
 DP_TARGET_LOW_SLOW = "112"  # target temperature "Low & Slow", °C
+DP_STAGE_LEVEL = "113"  # burner level 1-5 of the stage mode ("Stufenmodus")
+STAGE_LEVEL_MIN = 1
+STAGE_LEVEL_MAX = 5
 DP_GRILL_MODE = "114"
 GRILL_MODES = {
     0: "direct",

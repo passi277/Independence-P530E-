@@ -187,6 +187,9 @@
       },
       "timer_duration": {
         "name": "Timer-Dauer"
+      },
+      "stage_level": {
+        "name": "Grillstufe Stufenmodus"
       }
     },
     "button": {

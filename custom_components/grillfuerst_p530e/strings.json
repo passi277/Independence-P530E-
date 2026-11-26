@@ -187,6 +187,9 @@
       },
       "timer_duration": {
         "name": "Timer duration"
+      },
+      "stage_level": {
+        "name": "Stage mode level"
       }
     },
     "button": {
