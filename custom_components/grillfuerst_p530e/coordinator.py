@@ -51,28 +51,29 @@ def fetch_status(
     device.set_socketRetryLimit(1)
     fresh: dict[str, Any] = {}
     try:
-        # The Wi-Fi module answers status() from a cache; the grill's controller only
-        # reports new probe/chamber values when asked to refresh them (the app does this).
+        # Read the full status first, on its own, so no other answer is mistaken for it.
+        result = device.status()
+        if not isinstance(result, dict) or "Error" in result or "dps" not in result:
+            raise CannotConnect(str(result))
+        # The Wi-Fi module answers status() from a cache; the controller only sends new
+        # probe/chamber values when asked. DP 132 is the first thing the app sends when it
+        # opens (it is always "on", so re-sending it changes nothing), then ask for a refresh
+        # and collect whatever the grill pushes back.
         try:
-            # DP 132 is the first thing the app sends when it opens; the controller then
-            # reports all live values. It is always "on", so re-sending it changes nothing.
             device.set_value(LIVE_DP, True, nowait=True)
             device.updatedps(index=REFRESH_DPS, nowait=True)
             device.set_socketTimeout(1.5)
-            for _ in range(4):
+            for _ in range(6):
                 msg = device.receive()
                 if not isinstance(msg, dict):
                     break
+                _LOGGER.debug("Grill pushed %s", msg)
                 if isinstance(msg.get("dps"), dict):
                     fresh.update(msg["dps"])
-            device.set_socketTimeout(5)
         except Exception as err:  # noqa: BLE001 - refresh is best effort
             _LOGGER.debug("DP refresh failed: %s", err)
-        result = device.status()
     finally:
         device.close()
-    if not isinstance(result, dict) or "Error" in result or "dps" not in result:
-        raise CannotConnect(str(result))
     if fresh:
         _LOGGER.debug("Refreshed DPs %s", fresh)
     return {**result["dps"], **fresh}
