@@ -73,6 +73,21 @@ def send_value(
         raise CannotConnect(str(result))
 
 
+def discover_host(device_id: str) -> str | None:
+    """Listen for the grill's UDP broadcast and return its current IP (blocking, ~20 s)."""
+    try:
+        result = tinytuya.find_device(dev_id=device_id)
+    except Exception as err:  # noqa: BLE001 - discovery is best effort
+        _LOGGER.debug("Discovery failed: %s", err)
+        return None
+    ip = result.get("ip") if isinstance(result, dict) else None
+    return ip if isinstance(ip, str) and ip else None
+
+
+# After a failed poll, look for a changed IP at most this often
+DISCOVERY_INTERVAL = 10 * 60
+
+
 class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Polls the grill and keeps the last known value of every DP.
 
@@ -97,6 +112,7 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             CONF_PROTOCOL_VERSION, DEFAULT_PROTOCOL_VERSION
         )
         self._dps: dict[str, Any] = {}
+        self._last_discovery = 0.0
         self.analytics = GrillAnalytics()
         self._store: Store[dict[str, Any]] = Store(hass, 1, f"{DOMAIN}.{entry.entry_id}")
         # Tuya devices handle only one local connection well: serialise all access.
@@ -131,19 +147,45 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.analytics.update(time.time(), dps)
         self._store.async_delay_save(self.analytics.as_dict, 60)
 
+    async def _fetch(self) -> dict[str, Any]:
+        async with self._lock:
+            return await self.hass.async_add_executor_job(
+                fetch_status,
+                self.device_id,
+                self._host,
+                self._local_key,
+                self._protocol_version,
+            )
+
+    async def _rediscover(self) -> bool:
+        """The grill may have a new IP (DHCP): find it via its broadcast and store it."""
+        now = time.time()
+        if now - self._last_discovery < DISCOVERY_INTERVAL:
+            return False
+        self._last_discovery = now
+        ip = await self.hass.async_add_executor_job(discover_host, self.device_id)
+        if not ip or ip == self._host:
+            return False
+        _LOGGER.warning("Grill found at new IP %s (was %s), updating the configuration", ip, self._host)
+        self._host = ip
+        self.hass.config_entries.async_update_entry(
+            self.config_entry, data={**self.config_entry.data, CONF_HOST: ip}
+        )
+        return True
+
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            async with self._lock:
-                dps = await self.hass.async_add_executor_job(
-                    fetch_status,
-                    self.device_id,
-                    self._host,
-                    self._local_key,
-                    self._protocol_version,
-                )
+            dps = await self._fetch()
         except (CannotConnect, OSError) as err:
-            self._feed(None)
-            raise UpdateFailed(f"Grill did not answer: {err}") from err
+            dps = None
+            if await self._rediscover():
+                try:
+                    dps = await self._fetch()
+                except (CannotConnect, OSError):
+                    dps = None
+            if dps is None:
+                self._feed(None)
+                raise UpdateFailed(f"Grill did not answer: {err}") from err
 
         _LOGGER.debug("Grill reported %s", dps)
         self._dps.update(dps)

@@ -86,3 +86,36 @@ class GrillConfigFlow(ConfigFlow, domain=DOMAIN):
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Change the IP address (or protocol) of an existing grill."""
+        entry = self._get_reconfigure_entry()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            try:
+                await self.hass.async_add_executor_job(
+                    fetch_status,
+                    entry.data[CONF_DEVICE_ID],
+                    user_input[CONF_HOST],
+                    entry.data[CONF_LOCAL_KEY],
+                    user_input[CONF_PROTOCOL_VERSION],
+                )
+            except (CannotConnect, OSError) as err:
+                _LOGGER.debug("Connection test failed: %s", err)
+                errors["base"] = "cannot_connect"
+            else:
+                return self.async_update_reload_and_abort(entry, data_updates=user_input)
+
+        current = user_input or entry.data
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_HOST, default=current.get(CONF_HOST, "")): str,
+                vol.Required(
+                    CONF_PROTOCOL_VERSION,
+                    default=str(current.get(CONF_PROTOCOL_VERSION, DEFAULT_PROTOCOL_VERSION)),
+                ): vol.In(PROTOCOL_VERSIONS),
+            }
+        )
+        return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)

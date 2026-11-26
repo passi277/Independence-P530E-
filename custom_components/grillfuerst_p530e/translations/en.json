@@ -10,13 +10,22 @@
           "local_key": "Local key",
           "protocol_version": "Protocol version"
         }
+      },
+      "reconfigure": {
+        "title": "Change connection",
+        "description": "New IP address of the grill (e.g. after a router change). The integration also looks for a changed IP by itself.",
+        "data": {
+          "host": "IP address",
+          "protocol_version": "Protocol version"
+        }
       }
     },
     "error": {
       "cannot_connect": "The grill did not answer. Check the IP address, the local key and that the grill is switched on."
     },
     "abort": {
-      "already_configured": "This grill is already configured."
+      "already_configured": "This grill is already configured.",
+      "reconfigure_successful": "Connection updated."
     }
   },
   "entity": {
