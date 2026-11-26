@@ -27,7 +27,7 @@ WEIGHT_SCALE = 10
 
 # Temperatures (°C). 101-105 follow the DP pattern but are not yet confirmed with a hot grill.
 DP_CHAMBER_TEMP = "101"  # built-in sensor below the grate (assumed)
-DP_PROBE_TEMPS = ["102", "103", "104", "105"]  # probes F1-F4 (F1 verified)
+DP_PROBE_TEMPS = ["102", "103", "104", "105"]  # probes F1-F4 (all verified)
 DP_PROBE_TARGETS = ["106", "107", "108", "109"]  # probe target temperatures F1-F4 (F1-F3 verified)
 PROBE_TARGET_MIN = 0
 PROBE_TARGET_MAX = 200

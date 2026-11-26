@@ -111,7 +111,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 128 | bool | Logo-Beleuchtung | ✅ |
 | 129 | bool | Garraumlicht | ✅ |
 | 101 | int °C | vermutlich Garraumtemperatur (Fühler unter dem Rost); 23 bzw. 0 je nach Modus | ❓ |
-| 102–105 | int °C | Ist-Temperatur Fühler F1–F4 | ✅ F1 (DP 102) mit warmem Wasser bestätigt, F2–F4 nach Muster |
+| 102–105 | int °C | Ist-Temperatur Fühler F1–F4 | ✅ F1–F4 mit warmem Wasser bestätigt, aktualisiert auch bei geschlossener App |
 | 106–109 | int °C | Zieltemperatur Fühler F1–F4 (0–200) | ✅ F1–F3, F4 nach Muster |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
 | 130 | bool | Ton (Sound) an/aus | ✅ |
