@@ -11,7 +11,11 @@ CONF_PROTOCOL_VERSION = "protocol_version"
 DEFAULT_PROTOCOL_VERSION = "3.5"
 PROTOCOL_VERSIONS = ["3.3", "3.4", "3.5"]
 
-SCAN_INTERVAL_SECONDS = 15
+SCAN_INTERVAL_SECONDS = 15  # while grilling, a timer runs or a probe is plugged in
+IDLE_SCAN_INTERVAL_SECONDS = 60  # grill switched on but not in use
+OFFLINE_SCAN_INTERVAL_SECONDS = 60  # grill unplugged / not reachable
+# Above this (°C, control temperature) the grill counts as in use
+IN_USE_TEMP = 40
 
 MANUFACTURER = "Grillfürst"
 MODEL = "Independence P530E"

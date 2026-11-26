@@ -61,6 +61,12 @@ Im Standby oder ohne Strom meldet der Grill keine Gaswerte; Gasmenge, Füllstand
 Wert und bleiben verfügbar (auch über einen Neustart von Home Assistant hinweg). Der Sensor „Verbindung“ zeigt, ob der
 Grill erreichbar ist; Schalter und Einstellungen sind offline nicht verfügbar.
 
+### Abfrage-Intervall
+
+Die Integration fragt den Grill nur dann alle 15 s ab, wenn er gebraucht wird (Grillsession, Timer läuft oder klingelt,
+ein Fühler steckt, Ist-Temperatur ≥ 40 °C oder gerade etwas aus Home Assistant geschaltet). Sonst – und wenn der Grill
+ohne Strom ist – reicht einmal pro Minute. Die Smart Life App wird dafür nicht gebraucht.
+
 ### Grillmodi laut Bedienungsanleitung
 
 | Modus | Brenner | Regelt nach | Bereich |

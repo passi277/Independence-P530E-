@@ -17,7 +17,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .analytics import GrillAnalytics
+from .analytics import GrillAnalytics, control_temperature
 
 from .const import (
     CONF_DEVICE_ID,
@@ -27,8 +27,13 @@ from .const import (
     DOMAIN,
     DP_TIMER_ALARM,
     DP_TIMER_REMAINING,
+    DP_PROBE_TEMPS,
     DP_TIMER_STATE,
+    IDLE_SCAN_INTERVAL_SECONDS,
+    IN_USE_TEMP,
+    OFFLINE_SCAN_INTERVAL_SECONDS,
     SCAN_INTERVAL_SECONDS,
+    TIMER_PAUSED,
     TIMER_IDLE,
     TIMER_RUNNING,
     TIMER_STOPPED,
@@ -169,6 +174,7 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             except (CannotConnect, OSError) as err:
                 raise HomeAssistantError(f"Could not send command to the grill: {err}") from err
         self._dps[dp] = value
+        self._set_interval(SCAN_INTERVAL_SECONDS)
         # Update entities without restarting the poll interval
         # (async_set_updated_data would push the next poll back).
         self.data = dict(self._dps)
@@ -234,10 +240,33 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     dps = None
             if dps is None:
                 self._feed(None)
+                self._set_interval(OFFLINE_SCAN_INTERVAL_SECONDS)
                 raise UpdateFailed(f"Grill did not answer: {err}") from err
 
         _LOGGER.debug("Grill reported %s", dps)
         self._track_timer(dps)
         self._dps.update(dps)
         self._feed(self._dps)
+        self._set_interval(SCAN_INTERVAL_SECONDS if self.in_use else IDLE_SCAN_INTERVAL_SECONDS)
         return dict(self._dps)
+
+    @property
+    def in_use(self) -> bool:
+        """Grilling, a timer running/ringing, a probe plugged in or the grill warm: poll often."""
+        d = self._dps
+        temp = control_temperature(d)
+        probes = any(isinstance(d.get(dp), int) and not isinstance(d.get(dp), bool) and d[dp] > 0 for dp in DP_PROBE_TEMPS)
+        return (
+            self.analytics.grilling
+            or d.get(DP_TIMER_STATE) in (TIMER_RUNNING, TIMER_PAUSED)
+            or d.get(DP_TIMER_ALARM) is True
+            or self.timer_finished_at is not None and time.time() - self.timer_finished_at < 600
+            or probes
+            or (temp is not None and temp >= IN_USE_TEMP)
+        )
+
+    def _set_interval(self, seconds: int) -> None:
+        interval = timedelta(seconds=seconds)
+        if self.update_interval != interval:
+            _LOGGER.debug("Polling every %s s", seconds)
+            self.update_interval = interval
