@@ -40,11 +40,24 @@ SLOPE_WINDOW = 10 * 60
 MIN_SLOPE_SPAN = 2 * 60
 
 MODE_TARGET_DP = {0: DP_TARGET_DIRECT, 4: DP_TARGET_INDIRECT, 3: DP_TARGET_LOW_SLOW}
+# Manual: in indirect and low & slow the grill regulates with probe F4 placed above burner 3,
+# in direct and stage mode with the built-in sensor below the grate (DP 101).
+MODE_CONTROL_DP = {3: DP_PROBE_TEMPS[3], 4: DP_PROBE_TEMPS[3]}
+CONTROL = "control"
 
 
 def _num(data: dict[str, Any], dp: str) -> float | None:
     v = data.get(dp)
     return float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else None
+
+
+def control_temperature(data: dict[str, Any] | None) -> float | None:
+    """The temperature the grill regulates with in the current mode (display "Ist-Temperatur")."""
+    if not data:
+        return None
+    mode = data.get(DP_GRILL_MODE)
+    dp = MODE_CONTROL_DP.get(mode, DP_CHAMBER_TEMP) if isinstance(mode, int) else DP_CHAMBER_TEMP
+    return _num(data, dp)
 
 
 def eta_seconds(samples: deque[tuple[float, float]], target: float | None) -> float | None:
@@ -106,14 +119,17 @@ class GrillAnalytics:
         dt = 0.0 if self._last_tick is None else min(now - self._last_tick, 120.0)
         self._last_tick = now
         chamber = _num(data, DP_CHAMBER_TEMP) if data else None
+        control = control_temperature(data)
         used = self._track_gas(now, _num(data, DP_GAS_REMAINING) if data else None)
 
         if data:
             self._sample(DP_CHAMBER_TEMP, now, chamber)
+            self._sample(CONTROL, now, control)
             for dp in DP_PROBE_TEMPS:
                 self._sample(dp, now, _num(data, dp))
 
-        hot = chamber is not None and chamber >= ACTIVE_TEMP
+        hottest = max((t for t in (chamber, control) if t is not None), default=None)
+        hot = hottest is not None and hottest >= ACTIVE_TEMP
         burning = self._last_gas_drop is not None and now - self._last_gas_drop < SESSION_END_AFTER
         if hot or (data and burning):
             if self.session is None:
@@ -123,8 +139,8 @@ class GrillAnalytics:
             self.active_seconds += dt
             self.active_gas += used
             self.session.gas_used += used
-            if chamber is not None:
-                self.session.max_temp = max(self.session.max_temp, chamber)
+            if hottest is not None:
+                self.session.max_temp = max(self.session.max_temp, hottest)
         elif self.session is not None and now - self.session.last_active >= SESSION_END_AFTER:
             self.last_session = self.session.as_dict(self.session.last_active)
             self.session = None
@@ -189,7 +205,7 @@ class GrillAnalytics:
         return _num(data, dp) if dp else None
 
     def preheat_eta(self, data: dict[str, Any]) -> float | None:
-        return eta_seconds(self._samples.get(DP_CHAMBER_TEMP, deque()), self.preheat_target(data))
+        return eta_seconds(self._samples.get(CONTROL, deque()), self.preheat_target(data))
 
     def probe_eta(self, index: int, data: dict[str, Any]) -> float | None:
         return eta_seconds(self._samples.get(DP_PROBE_TEMPS[index], deque()), _num(data, DP_PROBE_TARGETS[index]))

@@ -16,7 +16,8 @@ Entitäten:
 
 | Entität | Typ | Quelle |
 |---------|-----|--------|
-| Garraumtemperatur (vermutet) | Sensor | DP 101 |
+| Ist-Temperatur (wonach der Grill im aktiven Modus regelt) | Sensor | DP 101 bzw. Fühler F4 (DP 105) bei Indirekt / Low & Slow |
+| Garraumtemperatur (eingebauter Fühler unter dem Rost) | Sensor | DP 101 |
 | Temperatur Fühler F1–F4 | Sensor | DP 102–105 |
 | Zieltemperatur Fühler F1–F4 (0–200 °C) | Zahl | DP 106–109 |
 | Garstufe Fühler F1–F4 (Vorauswahl der App, setzt die Zieltemperatur) | Auswahl | DP 106–109 |
@@ -59,6 +60,26 @@ Garstufen (wie in der App, nur die Temperatur wird an den Grill übertragen):
 Im Standby oder ohne Strom meldet der Grill keine Gaswerte; Gasmenge, Füllstand und Waage behalten dann den letzten
 Wert und bleiben verfügbar (auch über einen Neustart von Home Assistant hinweg). Der Sensor „Verbindung“ zeigt, ob der
 Grill erreichbar ist; Schalter und Einstellungen sind offline nicht verfügbar.
+
+### Grillmodi laut Bedienungsanleitung
+
+| Modus | Brenner | Regelt nach | Bereich |
+|-------|---------|-------------|---------|
+| Freies Grillen (F) | beliebig, Regelung von Hand | – (Deckelthermometer) | – |
+| Low & Slow (L) | die beiden äußeren Brenner auf Max | **Fühler F4** über Brenner 3, vor dem Grillgut, ≥ 6 cm von der Deckelwand | 95–115 °C |
+| Indirekt (I) | Brenner 1 und 5 auf Max, 2 und 4 auf Min, 3 aus | **Fühler F4** wie oben | 120–200 °C |
+| Direkt (D) | alle 5 Brenner auf Max | eingebauter Fühler unter dem Rost | 200–360 °C |
+| Stufen (S) | alle 5 Brenner auf Max | 5 Stufen „wie eine Herdplatte“, eingebauter Fühler | über 200 °C bis Maximum |
+
+Die Integration nutzt das für „Ist-Temperatur“, „Aufgeheizt“ und „Aufgeheizt um“. In den Modi I und L ist F4 also
+kein Kerntemperaturfühler, sondern der Garraumfühler. Heck- und Seitenbrenner regelt der Grill nicht; im Modus L, I
+oder D verfälscht der Heckbrenner die Regelung. Mit offenem Deckel lieber den Stufenmodus nutzen.
+
+Reglerlicht „magic“: Die Farbe folgt Fühler F1 im Verhältnis zur Zieltemperatur – Blau → Pink → Rot → Orange →
+Gelb → Grün kurz vor dem Ziel.
+
+Herunterfahren am Display schickt den Grill in den Standby und stellt das Hauptventil ganz auf; wer direkt
+ausschaltet oder den Strom trennt, lässt das Ventil womöglich halb offen.
 
 ### Auswertungen (ab 0.11.0)
 
@@ -112,7 +133,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 123 | int ×0,1 kg | Tara (App-Einstellung, 4,0–15,0 kg) | ✅ |
 | 128 | bool | Logo-Beleuchtung | ✅ |
 | 129 | bool | Garraumlicht | ✅ |
-| 101 | int °C | vermutlich Garraumtemperatur (Fühler unter dem Rost); 23 bzw. 0 je nach Modus | ❓ |
+| 101 | int °C | Garraumtemperatur, eingebauter Fühler unter dem Rost (Regelgröße bei Direkt und Stufen, laut Anleitung) | ✅ (Wert mit heißem Grill noch prüfen) |
 | 102–105 | int °C | Ist-Temperatur Fühler F1–F4 | ✅ F1–F4 mit warmem Wasser bestätigt, aktualisiert auch bei geschlossener App |
 | 106–109 | int °C | Zieltemperatur Fühler F1–F4 (0–200) | ✅ F1–F3, F4 nach Muster |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |

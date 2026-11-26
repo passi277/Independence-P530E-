@@ -17,7 +17,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import GrillConfigEntry
-from .const import DP_CHAMBER_TEMP, DP_PROBE_TARGETS, DP_PROBE_TEMPS, TIMER_FINISHED_HOLD_SECONDS
+from .analytics import control_temperature
+from .const import DP_PROBE_TARGETS, DP_PROBE_TEMPS, TIMER_FINISHED_HOLD_SECONDS
 from .coordinator import GrillCoordinator
 from .entity import GrillEntity
 
@@ -32,7 +33,7 @@ def _num(data: dict[str, Any], dp: str) -> float | None:
 
 def _preheated(c: GrillCoordinator) -> bool | None:
     data = c.data or {}
-    chamber, target = _num(data, DP_CHAMBER_TEMP), c.analytics.preheat_target(data)
+    chamber, target = control_temperature(data), c.analytics.preheat_target(data)
     if chamber is None or target is None:
         return None
     return chamber >= target - PREHEAT_MARGIN

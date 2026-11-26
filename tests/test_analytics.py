@@ -80,3 +80,18 @@ def test_roundtrip():
     a = GrillAnalytics(gas_consumed=1.234, active_seconds=4000, active_gas=0.8)
     b = GrillAnalytics.from_dict(a.as_dict())
     assert b.gas_consumed == 1.234 and b.active_seconds == 4000 and b.gas_rate is not None
+
+
+def test_control_temperature_follows_mode():
+    from gp.analytics import control_temperature
+
+    base = {"101": 180, "105": 120, "111": 125, "112": 100}
+    assert control_temperature({**base, "114": 0}) == 180  # direct: built-in sensor
+    assert control_temperature({**base, "114": 1}) == 180  # stage
+    assert control_temperature({**base, "114": 4}) == 120  # indirect: probe F4
+    assert control_temperature({**base, "114": 3}) == 120  # low & slow: probe F4
+    a = GrillAnalytics()
+    for i in range(10):
+        a.update(1000 + i * 30, {**base, "114": 4, "105": 80 + i * 4, "119": 50})
+    assert a.grilling
+    assert a.preheat_eta({**base, "114": 4}) is not None

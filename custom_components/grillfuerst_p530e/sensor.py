@@ -40,7 +40,7 @@ from .const import (
     TIMER_STATES,
     WEIGHT_SCALE,
 )
-from .analytics import GrillAnalytics
+from .analytics import GrillAnalytics, control_temperature
 from .entity import GrillEntity
 
 type SensorValue = float | int | str | None
@@ -106,6 +106,12 @@ def _temperature_sensor(**kwargs: Any) -> GrillSensorDescription:
 
 
 TEMPERATURE_SENSORS: tuple[GrillSensorDescription, ...] = (
+    _temperature_sensor(
+        key="control_temperature",
+        translation_key="control_temperature",
+        icon="mdi:thermometer-auto",
+        value_fn=lambda data: None if (t := control_temperature(data)) is None else int(t),
+    ),
     _temperature_sensor(
         key="chamber_temperature",
         translation_key="chamber_temperature",
