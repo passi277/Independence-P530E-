@@ -215,6 +215,9 @@
       },
       "probe_done": {
         "name": "Probe F{probe} done"
+      },
+      "timer_finished": {
+        "name": "Timer finished"
       }
     }
   }

@@ -215,6 +215,9 @@
       },
       "probe_done": {
         "name": "Fühler F{probe} fertig"
+      },
+      "timer_finished": {
+        "name": "Timer abgelaufen"
       }
     }
   }

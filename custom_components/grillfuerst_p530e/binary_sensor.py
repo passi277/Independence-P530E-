@@ -1,8 +1,9 @@
-"""Binary sensors of the Grillfürst Independence P530E: connection, grilling, preheated, probe done."""
+"""Binary sensors of the Grillfürst Independence P530E: connection, grilling, timer finished, preheated, probe done."""
 
 from __future__ import annotations
 
 from collections.abc import Callable
+import time
 from dataclasses import dataclass
 from typing import Any
 
@@ -16,7 +17,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import GrillConfigEntry
-from .const import DP_CHAMBER_TEMP, DP_PROBE_TARGETS, DP_PROBE_TEMPS
+from .const import DP_CHAMBER_TEMP, DP_PROBE_TARGETS, DP_PROBE_TEMPS, TIMER_FINISHED_HOLD_SECONDS
 from .coordinator import GrillCoordinator
 from .entity import GrillEntity
 
@@ -35,6 +36,11 @@ def _preheated(c: GrillCoordinator) -> bool | None:
     if chamber is None or target is None:
         return None
     return chamber >= target - PREHEAT_MARGIN
+
+
+def _timer_finished(c: GrillCoordinator) -> bool:
+    at = c.timer_finished_at
+    return at is not None and time.time() - at < TIMER_FINISHED_HOLD_SECONDS
 
 
 def _probe_done(index: int) -> Callable[[GrillCoordinator], bool | None]:
@@ -61,6 +67,8 @@ BINARY_SENSORS: tuple[GrillBinaryDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC, always_available=True, is_on_fn=lambda c: c.last_update_success),
     GrillBinaryDescription(key="grilling", translation_key="grilling", device_class=BinarySensorDeviceClass.RUNNING,
         icon="mdi:grill", always_available=True, is_on_fn=lambda c: c.analytics.grilling),
+    GrillBinaryDescription(key="timer_finished", translation_key="timer_finished", icon="mdi:timer-alert-outline",
+        is_on_fn=_timer_finished),
     GrillBinaryDescription(key="preheated", translation_key="preheated", icon="mdi:thermometer-check", is_on_fn=_preheated),
     *(
         GrillBinaryDescription(key=f"probe_{i + 1}_done", translation_key="probe_done", translation_placeholders={"probe": str(i + 1)},

@@ -33,6 +33,7 @@ Entitäten:
 | Timer Restzeit (min) | Sensor | DP 124 |
 | Timer-Dauer (min) | Zahl | DP 124 |
 | Timer Start / Pause / Stop | Knöpfe | DP 126 = 2 / 1 / 0 (getestet) |
+| Timer abgelaufen | Binärsensor (nach Ablauf 10 min an bzw. bis zum nächsten Start) | DP 125 / Timer-Ende |
 | Garraumlicht | Schalter | DP 129 |
 | Logo-Beleuchtung | Schalter | DP 128 |
 | Reglerbeleuchtung | Schalter (an = individuell) | DP 116 |
@@ -101,7 +102,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 111 | int °C | Zieltemperatur Indirektes Grillen (120–200) | ✅ |
 | 112 | int °C | Zieltemperatur Low & Slow (95–115) | ✅ |
 | 113 | int | Stufe im Stufenmodus (1–5) | ✅ |
-| 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ (2 sehr wahrscheinlich) |
+| 114 | int | Grillmodus: 0 Direkt, 1 Stufen, 2 Frei, 3 Low & Slow, 4 Indirekt | ✅ |
 | 116 | int | Reglerlicht-Modus: 0 aus, 1 zufällig, 2 temperaturabhängig, 3 individuell, 4 magic | ✅ |
 | 118 | string | Reglerfarbe: red, orange, yellow, green, light_green, deep_blue, purple, pink | ✅ |
 | 119 | int ×0,1 kg | aktuelle Gasmenge (= Waage − Tara, min. 0) | ✅ |
@@ -116,6 +117,7 @@ Protokoll 3.5, Product-ID `eo4tfylu1iue4ytt`. Im Standby meldet der Grill nur DP
 | 106–109 | int °C | Zieltemperatur Fühler F1–F4 (0–200) | ✅ F1–F3, F4 nach Muster |
 | 124 | int min | Timer-Restzeit (aufgerundet) | ✅ |
 | 130 | bool | Ton (Sound) an/aus | ✅ |
-| 125, 131 | bool | ? | ❓ |
+| 125 | bool | Timer-Alarm: wenige Sekunden an, wenn der Timer abläuft (danach 126: läuft → gestoppt → bereit) | ✅ |
+| 131 | bool | ? (immer an) | ❓ |
 | 126 | int | Timer-Status: 0 gestoppt, 1 pausiert, 2 läuft, 3 bereit | ✅ |
 | 132 | bool | evtl. Grill aktiv/wach | ❓ |

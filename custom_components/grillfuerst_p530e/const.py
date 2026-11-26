@@ -75,6 +75,7 @@ GRILL_MODES = {
 
 # Kitchen timer of the app
 DP_TIMER_REMAINING = "124"  # remaining minutes (rounded up)
+DP_TIMER_ALARM = "125"  # true for a few seconds while the grill rings at the end of the timer
 DP_TIMER_STATE = "126"
 TIMER_STATES = {
     0: "stopped",
@@ -85,7 +86,10 @@ TIMER_STATES = {
 TIMER_STOPPED = 0
 TIMER_PAUSED = 1
 TIMER_RUNNING = 2
+TIMER_IDLE = 3
 TIMER_MAX_MINUTES = 23 * 60 + 59  # app picker: hours + minutes
+# "Timer abgelaufen" stays on this long (the alarm DP itself is shorter than a poll)
+TIMER_FINISHED_HOLD_SECONDS = 10 * 60
 
 # Lighting
 DP_KNOB_LIGHT = "116"  # knob light mode, see KNOB_LIGHT_MODES

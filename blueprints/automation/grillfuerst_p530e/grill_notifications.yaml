@@ -46,12 +46,11 @@ blueprint:
               device_class: timestamp
               multiple: true
         timer:
-          name: Timer
+          name: Timer abgelaufen
           selector:
             entity:
               integration: grillfuerst_p530e
-              domain: sensor
-              device_class: enum
+              domain: binary_sensor
         gas_level:
           name: Gasfüllstand
           selector:
@@ -157,8 +156,8 @@ triggers:
   - trigger: state
     id: timer_done
     entity_id: !input timer
-    from: running
-    to: idle
+    from: "off"
+    to: "on"
     enabled: !input notify_timer
   - trigger: numeric_state
     id: gas_low

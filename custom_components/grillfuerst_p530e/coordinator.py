@@ -25,7 +25,13 @@ from .const import (
     CONF_PROTOCOL_VERSION,
     DEFAULT_PROTOCOL_VERSION,
     DOMAIN,
+    DP_TIMER_ALARM,
+    DP_TIMER_REMAINING,
+    DP_TIMER_STATE,
     SCAN_INTERVAL_SECONDS,
+    TIMER_IDLE,
+    TIMER_RUNNING,
+    TIMER_STOPPED,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -140,6 +146,8 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self._dps: dict[str, Any] = {}
         self._last_discovery = 0.0
+        # When the timer last ran out (None while it has not or after a restart)
+        self.timer_finished_at: float | None = None
         self.analytics = GrillAnalytics()
         self._store: Store[dict[str, Any]] = Store(hass, 1, f"{DOMAIN}.{entry.entry_id}")
         # Tuya devices handle only one local connection well: serialise all access.
@@ -165,6 +173,20 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # (async_set_updated_data would push the next poll back).
         self.data = dict(self._dps)
         self.async_update_listeners()
+
+    def _track_timer(self, dps: dict[str, Any]) -> None:
+        """Notice the end of the timer.
+
+        The grill sets DP 125 only for a few seconds and then goes running -> stopped -> idle.
+        A manual stop keeps the remaining minutes (rounded up, so >= 1), a finished timer has 0.
+        """
+        before, now = self._dps.get(DP_TIMER_STATE), dps.get(DP_TIMER_STATE)
+        if now == TIMER_RUNNING:
+            self.timer_finished_at = None
+            return
+        ran_out = before == TIMER_RUNNING and now in (TIMER_STOPPED, TIMER_IDLE) and dps.get(DP_TIMER_REMAINING) == 0
+        if (dps.get(DP_TIMER_ALARM) is True or ran_out) and self.timer_finished_at is None:
+            self.timer_finished_at = time.time()
 
     async def async_load(self) -> None:
         """Restore totals and the last session from storage."""
@@ -215,6 +237,7 @@ class GrillCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 raise UpdateFailed(f"Grill did not answer: {err}") from err
 
         _LOGGER.debug("Grill reported %s", dps)
+        self._track_timer(dps)
         self._dps.update(dps)
         self._feed(self._dps)
         return dict(self._dps)
