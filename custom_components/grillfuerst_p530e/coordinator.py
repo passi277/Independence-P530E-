@@ -33,6 +33,8 @@ _LOGGER = logging.getLogger(__name__)
 
 # Measured values the controller only reports on request
 REFRESH_DPS = [101, 102, 103, 104, 105, 119, 120, 121, 124, 126]
+# Writing this DP (as the app does on open) makes the controller send its live values
+LIVE_DP = 132
 
 
 class CannotConnect(Exception):
@@ -52,6 +54,9 @@ def fetch_status(
         # The Wi-Fi module answers status() from a cache; the grill's controller only
         # reports new probe/chamber values when asked to refresh them (the app does this).
         try:
+            # DP 132 is the first thing the app sends when it opens; the controller then
+            # reports all live values. It is always "on", so re-sending it changes nothing.
+            device.set_value(LIVE_DP, True, nowait=True)
             device.updatedps(index=REFRESH_DPS, nowait=True)
             device.set_socketTimeout(1.5)
             for _ in range(4):
