@@ -31,6 +31,10 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
+# Measured values the controller only reports on request
+REFRESH_DPS = [101, 102, 103, 104, 105, 119, 120, 121, 124, 126]
+
+
 class CannotConnect(Exception):
     """Raised when the grill does not answer with a valid status."""
 
@@ -40,16 +44,33 @@ def fetch_status(
 ) -> dict[str, Any]:
     """Read the current DPs from the grill (blocking, run in an executor)."""
     device = tinytuya.Device(device_id, host, local_key, version=float(protocol_version))
-    device.set_socketPersistent(False)
+    device.set_socketPersistent(True)
     device.set_socketTimeout(5)
     device.set_socketRetryLimit(1)
+    fresh: dict[str, Any] = {}
     try:
+        # The Wi-Fi module answers status() from a cache; the grill's controller only
+        # reports new probe/chamber values when asked to refresh them (the app does this).
+        try:
+            device.updatedps(index=REFRESH_DPS, nowait=True)
+            device.set_socketTimeout(1.5)
+            for _ in range(4):
+                msg = device.receive()
+                if not isinstance(msg, dict):
+                    break
+                if isinstance(msg.get("dps"), dict):
+                    fresh.update(msg["dps"])
+            device.set_socketTimeout(5)
+        except Exception as err:  # noqa: BLE001 - refresh is best effort
+            _LOGGER.debug("DP refresh failed: %s", err)
         result = device.status()
     finally:
         device.close()
     if not isinstance(result, dict) or "Error" in result or "dps" not in result:
         raise CannotConnect(str(result))
-    return result["dps"]
+    if fresh:
+        _LOGGER.debug("Refreshed DPs %s", fresh)
+    return {**result["dps"], **fresh}
 
 
 def send_value(
